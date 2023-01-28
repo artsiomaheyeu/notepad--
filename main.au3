@@ -1,3 +1,13 @@
+#Region ;**** Directives created by AutoIt3Wrapper_GUI ****
+#AutoIt3Wrapper_Icon=icon.ico
+#AutoIt3Wrapper_Outfile=build\notepad--.exe
+#AutoIt3Wrapper_Res_Description=A simple text editor for logging test sessions
+#AutoIt3Wrapper_Res_Fileversion=0.0.0.3
+#AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
+#AutoIt3Wrapper_Res_ProductName=notepad--
+#AutoIt3Wrapper_Res_ProductVersion=0.1
+#AutoIt3Wrapper_Res_CompanyName=Aheyeu Artsiom
+#EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #cs ----------------------------------------------------------------------------
 
  AutoIt Version: 3.3.16.1
