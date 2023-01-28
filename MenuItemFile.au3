@@ -9,10 +9,15 @@
 
 Func SubMenuItemSave()
 	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemSave) & @CRLF) 
+
 EndFunc
 
 Func SubMenuItemOpen()
 	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemOpen) & @CRLF) 
+EndFunc
+
+Func SubMenuItemConfig()
+	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemConfig) & @CRLF)
 EndFunc
 
 Func SubMenuItemExit()

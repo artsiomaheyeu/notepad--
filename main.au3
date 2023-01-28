@@ -2,7 +2,7 @@
 #AutoIt3Wrapper_Icon=icon.ico
 #AutoIt3Wrapper_Outfile=build\notepad--.exe
 #AutoIt3Wrapper_Res_Description=A simple text editor for logging test sessions
-#AutoIt3Wrapper_Res_Fileversion=0.0.0.3
+#AutoIt3Wrapper_Res_Fileversion=0.0.0.5
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=notepad--
 #AutoIt3Wrapper_Res_ProductVersion=0.1
@@ -23,6 +23,7 @@
 #include <WindowsConstants.au3>
 
 #include "constants.au3"
+#include "config.au3"
 #include "MenuItemFile.au3"
 #include "MenuItemEdit.au3"
 #include "MenuItemAbout.au3"
@@ -36,10 +37,18 @@ $MenuItemFile = GUICtrlCreateMenu("File")
 GUICtrlSetState(-1, $GUI_CHECKED)
 $SubMenuItemSave = GUICtrlCreateMenuItem("Save", $MenuItemFile)
 $SubMenuItemOpen = GUICtrlCreateMenuItem("Open...", $MenuItemFile)
+$SubMenuItemConfig = GUICtrlCreateMenuItem("Edit config", $MenuItemFile)
+GUICtrlCreateMenuItem("", $MenuItemFile)
 $SubMenuItemExit = GUICtrlCreateMenuItem("Exit", $MenuItemFile)
 
 $MenuItemEdit = GUICtrlCreateMenu("Edit")
-$SubMenuItemConfig = GUICtrlCreateMenuItem("Config", $MenuItemEdit)
+
+Local $i = 1
+Local $aSubMenuItemEdit[$aKeySection[0][0]]
+While $i <= $aKeySection[0][0]
+	$aSubMenuItemEdit[$i - 1] = GUICtrlCreateMenuItem($aKeySection[$i][1] & " [" & $aKeySection[$i][0] & "]", $MenuItemEdit)
+	$i += 1
+WEnd 
 
 $MenuItemAbout = GUICtrlCreateMenu("?")
 $SubMenuItemAbout = GUICtrlCreateMenuItem("About", $MenuItemAbout)

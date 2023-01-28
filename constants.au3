@@ -10,6 +10,10 @@
 
 Const $DEBUG 		= True
 
+Const $INI 			= "config.ini"
+Const $INIDEFAULSTS = "Basic"
+Const $INIKEYS 		= "Keys"
+
 Const $APPNAME 		= "notepad--"
 Const $AUTHOR 		= "Artsiom Aheyeu"
 Const $BOXMAIL 		= "artiom.ageev@gmail.com"

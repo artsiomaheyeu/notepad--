@@ -7,6 +7,3 @@
 
 #ce ----------------------------------------------------------------------------
 
-Func SubMenuItemConfig()
-	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemConfig) & @CRLF)
-EndFunc
