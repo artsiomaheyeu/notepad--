@@ -1,5 +1,7 @@
 # notepad--
+
 A simple text editor for logging test sessions.
+
 - Timestamps with absolute and relative time meter
 - CSV text format with semicolon to separate values
 - ✨ Magic keys for super fast typing✨
@@ -21,7 +23,7 @@ May be possible 3:
 
 Just copy exeutable file and run for fun!
 
-## Feedback 
+## Feedback
 
 Test and send me not only bugs but also wishes, best wishes;)
 

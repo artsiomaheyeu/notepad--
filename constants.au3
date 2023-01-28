@@ -7,3 +7,13 @@
 	Constants basket for notepad--
 
 #ce ----------------------------------------------------------------------------
+
+Const $DEBUG 		= True
+
+Const $APPNAME 		= "notepad--"
+Const $AUTHOR 		= "Artsiom Aheyeu"
+Const $BOXMAIL 		= "artiom.ageev@gmail.com"
+Const $REPURL 		= "https://github.com/artsiomaheyeu/notepad--.git"
+Const $BUILDFOLDER 	= "/build"
+
+Const $APPSIZE[2] 	= [1128, 246] ; [width, height] 
