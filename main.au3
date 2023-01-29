@@ -13,7 +13,7 @@
  AutoIt Version: 3.3.16.1
  Author:         Artsiom Aheyeu
 
- Script Function: main module 
+ Script Function: main module
 
 #ce ----------------------------------------------------------------------------
 
@@ -22,11 +22,18 @@
 #include <GuiStatusBar.au3>
 #include <WindowsConstants.au3>
 
+
 #include "constants.au3"
 #include "config.au3"
 #include "MenuItemFile.au3"
 #include "MenuItemEdit.au3"
 #include "MenuItemAbout.au3"
+
+#Region ### Variables section ###
+Global $bIfExternalFileConnected = False ; [True|False]
+Global $sMainFilePath = ""
+Global $sMainData = ""
+#EndRegion ### Variables section ###
 
 Opt("GUIResizeMode", $GUI_DOCKAUTO)
 
@@ -34,8 +41,10 @@ Opt("GUIResizeMode", $GUI_DOCKAUTO)
 $MainForm = GUICreate($APPNAME, $APPSIZE[0], $APPSIZE[1], -1, -1, $WS_OVERLAPPEDWINDOW)
 
 $MenuItemFile = GUICtrlCreateMenu("File")
-GUICtrlSetState(-1, $GUI_CHECKED)
+GUICtrlSetState($MenuItemFile, $GUI_CHECKED)
 $SubMenuItemSave = GUICtrlCreateMenuItem("Save", $MenuItemFile)
+If Not $bIfExternalFileConnected Then GUICtrlSetState(-1, $GUI_DISABLE)
+$SubMenuItemSaveAs = GUICtrlCreateMenuItem("Save As..", $MenuItemFile)
 $SubMenuItemOpen = GUICtrlCreateMenuItem("Open...", $MenuItemFile)
 $SubMenuItemConfig = GUICtrlCreateMenuItem("Edit config", $MenuItemFile)
 GUICtrlCreateMenuItem("", $MenuItemFile)
@@ -48,7 +57,7 @@ Local $aSubMenuItemEdit[$aKeySection[0][0]]
 While $i <= $aKeySection[0][0]
 	$aSubMenuItemEdit[$i - 1] = GUICtrlCreateMenuItem($aKeySection[$i][1] & " [" & $aKeySection[$i][0] & "]", $MenuItemEdit)
 	$i += 1
-WEnd 
+WEnd
 
 $MenuItemAbout = GUICtrlCreateMenu("?")
 $SubMenuItemAbout = GUICtrlCreateMenuItem("About", $MenuItemAbout)
@@ -67,27 +76,34 @@ GUICtrlSetResizing($MainEdit, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $G
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
-#Region ### Variables section ###
-#EndRegion ### Variables section ###
-
 #Region ### MAIN ###
-	While 1
-		$nMsg = GUIGetMsg()
-		Switch $nMsg
-			Case $GUI_EVENT_CLOSE
-				SubMenuItemExit()
-			Case $SubMenuItemSave
-				SubMenuItemSave()
-			Case $SubMenuItemOpen
-				SubMenuItemOpen()
-			Case $SubMenuItemExit
-				SubMenuItemExit()
-			Case $SubMenuItemConfig
-				SubMenuItemConfig()
-			Case $SubMenuItemAbout
-				SubMenuItemAbout()
-		EndSwitch
-	WEnd
+While 1
+	$nMsg = GUIGetMsg()
+	Switch $nMsg
+		Case $SubMenuItemExit
+			SubMenuItemExit(GUICtrlRead($MainEdit))
+			Exit
+		Case $GUI_EVENT_CLOSE 
+			SubMenuItemExit(GUICtrlRead($MainEdit))
+			Exit
+		Case $SubMenuItemSave
+		    $sMainData = GUICtrlRead($MainEdit)
+			SubMenuItemSave($sMainData)
+		Case $SubMenuItemSaveAs
+			$sMainData = GUICtrlRead($MainEdit)
+			SubMenuItemSaveAs($sMainData)
+		Case $SubMenuItemOpen
+			If SubMenuItemOpen() Then 
+				GUICtrlSetData($MainEdit, $sMainData)
+				$bIfExternalFileConnected = True
+				GUICtrlSetState($SubMenuItemSave, $GUI_ENABLE)
+			EndIf
+		Case $SubMenuItemConfig
+			SubMenuItemConfig()
+		Case $SubMenuItemAbout
+			SubMenuItemAbout()
+	EndSwitch
+WEnd
 #EndRegion ### MAIN ###
 
 #Region ### Functions ###
