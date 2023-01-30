@@ -24,13 +24,13 @@
 
 #Region ### Variables section ###
 #include "constants.au3"
+#include "config.au3"
 Global $bIfExternalFileConnected = False ; [True|False]
 Global $sMainFilePath = ""
 Global $sMainFileName = ""
 Global $sMainData = ""
 #EndRegion ### Variables section ###
 
-#include "config.au3"
 #include "MenuItemFile.au3"
 #include "MenuItemEdit.au3"
 #include "MenuItemAbout.au3"
@@ -54,9 +54,9 @@ $SubMenuItemExit = GUICtrlCreateMenuItem("Exit", $MenuItemFile)
 $MenuItemEdit = GUICtrlCreateMenu("Edit")
 
 Local $i = 1
-Local $aSubMenuItemEdit[$aKeySection[0][0]]
+Local $aSubMenuItemEdit[$aKeySection[0][0] + 1]
 While $i <= $aKeySection[0][0]
-	$aSubMenuItemEdit[$i - 1] = GUICtrlCreateMenuItem($aKeySection[$i][1] & " [" & $aKeySection[$i][0] & "]", $MenuItemEdit)
+	$aSubMenuItemEdit[$i] = GUICtrlCreateMenuItem($aKeySection[$i][1] & " [" & $aKeySection[$i][0] & "]", $MenuItemEdit)
 	$i += 1
 WEnd
 
@@ -104,6 +104,9 @@ While 1
 			SubMenuItemConfig()
 		Case $SubMenuItemAbout
 			SubMenuItemAbout()
+		Case $aSubMenuItemEdit[1] to $aSubMenuItemEdit[UBound($aSubMenuItemEdit) - 1]
+			$vElement = _ArraySearch($aSubMenuItemEdit, $nMsg)		
+			SubMenuItemEdit($aKeySection[$vElement][1], $aKeySection[$vElement][0])
 	EndSwitch
 WEnd
 #EndRegion ### MAIN ###

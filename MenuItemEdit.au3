@@ -7,3 +7,6 @@
 
 #ce ----------------------------------------------------------------------------
 
+Func SubMenuItemEdit($sItemName, $sItemKey)
+	if $DEBUG Then 	ConsoleWrite(FuncName(SubMenuItemEdit) & $sItemName & $sItemKey &@CRLF)
+EndFunc

@@ -11,7 +11,7 @@
 Global Const $DEBUG 		= True
 
 Global Const $INI 			= "config.ini"
-Global Const $INIDEFAULSTS = "Basic"
+Global Const $INIDEFAULSTS 	= "Basic"
 Global Const $INIKEYS 		= "Keys"
 
 Global Const $APPNAME 		= "notepad--"
