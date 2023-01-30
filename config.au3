@@ -10,11 +10,11 @@
 
 #include <Array.au3>
 
-$aBasicSection = _ReadINISection($INI, "Basic")
-$aKeySection = _ReadINISection($INI, "Keys")
+Global $aBasicSection = _ReadINISection($INI, "Basic")
+Global $aKeySection = _ReadINISection($INI, "Keys")
 
 Func _ReadINISection($sFileName, $sSectionName)
-	$aValueSection = IniReadSection($sFileName, $sSectionName)
+	Local $aValueSection = IniReadSection($sFileName, $sSectionName)
 	If Not @error Then
 		if $DEBUG Then _ArrayDisplay($aValueSection, $sSectionName)
 		Return $aValueSection

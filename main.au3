@@ -22,23 +22,24 @@
 #include <GuiStatusBar.au3>
 #include <WindowsConstants.au3>
 
-
+#Region ### Variables section ###
 #include "constants.au3"
+Global $bIfExternalFileConnected = False ; [True|False]
+Global $sMainFilePath = ""
+Global $sMainFileName = ""
+Global $sMainData = ""
+#EndRegion ### Variables section ###
+
 #include "config.au3"
 #include "MenuItemFile.au3"
 #include "MenuItemEdit.au3"
 #include "MenuItemAbout.au3"
 
-#Region ### Variables section ###
-Global $bIfExternalFileConnected = False ; [True|False]
-Global $sMainFilePath = ""
-Global $sMainData = ""
-#EndRegion ### Variables section ###
-
 Opt("GUIResizeMode", $GUI_DOCKAUTO)
 
 #Region ### START Koda GUI section ### Form=FormDesigner.kxf
-$MainForm = GUICreate($APPNAME, $APPSIZE[0], $APPSIZE[1], -1, -1, $WS_OVERLAPPEDWINDOW)
+Global $sHeaderName = $APPNAME & "  " & "Untitled"
+$MainForm = GUICreate($sHeaderName, $APPSIZE[0], $APPSIZE[1], -1, -1, $WS_OVERLAPPEDWINDOW)
 
 $MenuItemFile = GUICtrlCreateMenu("File")
 GUICtrlSetState($MenuItemFile, $GUI_CHECKED)
@@ -81,22 +82,23 @@ While 1
 	$nMsg = GUIGetMsg()
 	Switch $nMsg
 		Case $SubMenuItemExit
-			SubMenuItemExit(GUICtrlRead($MainEdit))
+			SubMenuItemExit(GUICtrlRead($MainEdit), $MainForm)
 			Exit
 		Case $GUI_EVENT_CLOSE 
-			SubMenuItemExit(GUICtrlRead($MainEdit))
+			SubMenuItemExit(GUICtrlRead($MainEdit), $MainForm)
 			Exit
 		Case $SubMenuItemSave
 		    $sMainData = GUICtrlRead($MainEdit)
-			SubMenuItemSave($sMainData)
+			SubMenuItemSave($sMainData, $MainForm)
 		Case $SubMenuItemSaveAs
 			$sMainData = GUICtrlRead($MainEdit)
-			SubMenuItemSaveAs($sMainData)
+			SubMenuItemSaveAs($sMainData, $MainForm)
 		Case $SubMenuItemOpen
-			If SubMenuItemOpen() Then 
+			If SubMenuItemOpen($MainForm) Then 	
 				GUICtrlSetData($MainEdit, $sMainData)
 				$bIfExternalFileConnected = True
 				GUICtrlSetState($SubMenuItemSave, $GUI_ENABLE)
+				WinSetTitle($MainForm, "", $APPNAME & "  " & $sMainFileName)
 			EndIf
 		Case $SubMenuItemConfig
 			SubMenuItemConfig()

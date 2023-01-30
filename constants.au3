@@ -8,16 +8,16 @@
 
 #ce ----------------------------------------------------------------------------
 
-Const $DEBUG 		= True
+Global Const $DEBUG 		= True
 
-Const $INI 			= "config.ini"
-Const $INIDEFAULSTS = "Basic"
-Const $INIKEYS 		= "Keys"
+Global Const $INI 			= "config.ini"
+Global Const $INIDEFAULSTS = "Basic"
+Global Const $INIKEYS 		= "Keys"
 
-Const $APPNAME 		= "notepad--"
-Const $AUTHOR 		= "Artsiom Aheyeu"
-Const $BOXMAIL 		= "artiom.ageev@gmail.com"
-Const $REPURL 		= "https://github.com/artsiomaheyeu/notepad--.git"
-Const $BUILDFOLDER 	= "/build"
+Global Const $APPNAME 		= "notepad--"
+Global Const $AUTHOR 		= "Artsiom Aheyeu"
+Global Const $BOXMAIL 		= "artiom.ageev@gmail.com"
+Global Const $REPURL 		= "https://github.com/artsiomaheyeu/notepad--.git"
+Global Const $BUILDFOLDER 	= "/build"
 
-Const $APPSIZE[2] 	= [1128, 246] ; [width, height] 
+Global Const $APPSIZE[2] 	= [1128, 246] ; [width, height] 
