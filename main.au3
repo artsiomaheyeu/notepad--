@@ -88,17 +88,25 @@ While 1
 			SubMenuItemExit(GUICtrlRead($MainEdit), $MainForm)
 			Exit
 		Case $SubMenuItemSave
-		    $sMainData = GUICtrlRead($MainEdit)
-			SubMenuItemSave($sMainData, $MainForm)
+			if $bIfExternalFileConnected Then
+		    	$sMainData = GUICtrlRead($MainEdit)
+				SubMenuItemSave($sMainData, $sMainFilePath, $MainForm)
+			EndIf
 		Case $SubMenuItemSaveAs
 			$sMainData = GUICtrlRead($MainEdit)
-			SubMenuItemSaveAs($sMainData, $MainForm)
+			If SubMenuItemSaveAs($sMainData, $MainForm) Then
+				_ChangeItemStatusTo(True)
+				_UpdateFormTitle()
+			EndIf
 		Case $SubMenuItemOpen
+			if $bIfExternalFileConnected And Not ($sMainData == GUICtrlRead($MainEdit)) Then
+		    	$sMainData = GUICtrlRead($MainEdit)
+				SubMenuItemSave($sMainData, $sMainFilePath, $MainForm)
+			EndIf
 			If SubMenuItemOpen($MainForm) Then 	
 				GUICtrlSetData($MainEdit, $sMainData)
-				$bIfExternalFileConnected = True
-				GUICtrlSetState($SubMenuItemSave, $GUI_ENABLE)
-				WinSetTitle($MainForm, "", $APPNAME & "  " & $sMainFileName)
+				_ChangeItemStatusTo(True)
+				_UpdateFormTitle()
 			EndIf
 		Case $SubMenuItemConfig
 			SubMenuItemConfig()
@@ -112,5 +120,18 @@ WEnd
 #EndRegion ### MAIN ###
 
 #Region ### Functions ###
+Func _UpdateFormTitle()
+	If $bIfExternalFileConnected Then WinSetTitle($MainForm, "", $APPNAME & "  " & $sMainFileName)
+EndFunc
 
+Func _ChangeItemStatusTo($bStatus)
+	If BitXOR($bIfExternalFileConnected, $bStatus) Then
+		$bIfExternalFileConnected = $bStatus
+		If $bStatus Then
+			GUICtrlSetState($SubMenuItemSave, $GUI_ENABLE)
+		Else
+			GUICtrlSetState($SubMenuItemSave, $GUI_DISABLE)
+		EndIf
+	EndIf
+EndFunc
 #EndRegion ### Functions ###

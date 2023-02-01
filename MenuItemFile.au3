@@ -11,34 +11,33 @@
 #include <MsgBoxConstants.au3>
 #include <StringConstants.au3>
 
-Func SubMenuItemSave($sCheckData, $hGUI)
-	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemSave) & @CRLF) 
-	If Not ($sCheckData == _OpenFile($sMainFilePath, $FO_READ)) Then 
-		$iReturn = _OpenFile($sMainFilePath, $FO_OVERWRITE, $sCheckData)
-		If Not $iReturn Then SubMenuItemSaveAs($sCheckData, $hGUI)
+Func SubMenuItemSave(ByRef $sData, $sPath, $hGUI)
+	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemSave) & @CRLF)
+	Local $iAnswer = MsgBox($MB_YESNO, "Qustion?", "Do you want to safe " & $sMainFileName & " file?")
+	If $iAnswer == $IDNO Then Return
+	If Not ($sData == _OpenFile($sPath, $FO_READ, $sData)) Then 
+		Local $iReturn = _OpenFile($sPath, $FO_OVERWRITE, $sData)
+		If Not $iReturn Then SubMenuItemSaveAs($sData, $hGUI)
 	EndIf
 EndFunc
 
-Func SubMenuItemSaveAs($sCheckData, $hGUI)
+Func SubMenuItemSaveAs($sData, $hGUI)
 	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemSaveAs) & @CRLF) 
-	Local Const $sMessage = "Choose a filename..."
-	Local $sFileSaveDialog = FileSaveDialog($sMessage, @ScriptDir & "\", "Text file (*.csv;*.txt)|All (*.*)", $FD_PATHMUSTEXIST, "", $hGUI)
+	Local Const $sMessage = "Safe: Choose a filename..."
+	Local $sDialogReturnPath = FileSaveDialog($sMessage, @ScriptDir & "\", "Text file (*.csv;*.txt)|All (*.*)", $FD_PATHMUSTEXIST, "", $hGUI)
 	If @error Then
 		MsgBox($MB_SYSTEMMODAL, "Info", "No file was saved.")
 		Return False
 	Else
-		Local $sFileName = StringTrimLeft($sFileSaveDialog, StringInStr($sFileSaveDialog, "\", $STR_NOCASESENSEBASIC, -1))
-		Local $iExtension = StringInStr($sFileName, ".", $STR_NOCASESENSEBASIC)
-		If Not $iExtension Then $sFileSaveDialog &= ".txt"
-
-		_OpenFile($sFileSaveDialog, $FO_OVERWRITE, $sCheckData)
-		Return True
+		$sMainFileName = _GetNameFromPath($sDialogReturnPath)
+		If Not _OpenFile($sDialogReturnPath, $FO_OVERWRITE, $sData) Then Return False
 	EndIf
+	Return True
 EndFunc
 
 Func SubMenuItemOpen($hGUI)
-	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemOpen) & @CRLF) 
-	If _ChooseFile($hGUI) Then $sMainData = _OpenFile($sMainFilePath, $FO_READ)
+	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemOpen) & @CRLF)
+	If _ChooseFile($hGUI) Then $sMainData = _OpenFile($sMainFilePath, $FO_READ, $sMainData)
 	If $sMainData Then 
 		$sMainFileName = _GetNameFromPath($sMainFilePath)
 		Return True
@@ -53,11 +52,11 @@ EndFunc
 Func SubMenuItemExit($sCheckData, $hGUI)
 	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemExit) & @CRLF) 
 	If Not ($sCheckData == $sMainData) Then
-		Local $iAnswer = MsgBox($MB_YESNOCANCEL, "Qustion?", "Do you want to safe before exit?")
+		Local $iAnswer = MsgBox($MB_YESNOCANCEL, "Qustion?", "Do you want to safe "& $sMainFileName &" file before exit?")
 		If $iAnswer == $IDYES Then 
 			Switch $bIfExternalFileConnected
 				Case True
-					SubMenuItemSave($sCheckData, $hGUI)
+					SubMenuItemSave($sMainFilePath, $sCheckData, $hGUI)
 				Case False
 					SubMenuItemSaveAs($sCheckData, $hGUI)
 			EndSwitch
@@ -85,41 +84,46 @@ Func _CheckFileZeroSize($sPath)
 EndFunc
 
 Func _ChooseFile($hGUI)
-	Local Const $sMessage = "Select text file ..."
-	Local $sReturn = FileOpenDialog($sMessage, @ScriptDir & "\", "Text files (*.csv; *.txt)|All (*.*)", $FD_PROMPTCREATENEW , "", $hGUI)
-	If Not @error Then
-		$sMainFilePath = $sReturn
-		Return True
-	Else
+	Local Const $sMessage = "Open: Select text file ..."
+	Local $sDialogReturnPath = FileOpenDialog($sMessage, @ScriptDir & "\", "Text files (*.csv; *.txt)|All (*.*)", $FD_PROMPTCREATENEW , "", $hGUI)
+	If @error Then
+		MsgBox($MB_SYSTEMMODAL, "", "File not selected.")
 		Return False
 	EndIf
+	$sMainFilePath = $sDialogReturnPath
+	Return True
 EndFunc
 
-Func _OpenFile($sPath, $sReadType, $sData="")
+Func _OpenFile($sPath, $sReadType, ByRef $sData) ;TODO: Refactor
 	Local $hFileOpen = FileOpen($sPath, $sReadType)
+	;### Debug CONSOLE ↓↓↓
+	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $hFileOpen = ' & $hFileOpen & @CRLF & '>Error code: ' & @error & @CRLF)
 	If $hFileOpen = -1 Then
 		MsgBox(4096, "Warming", "An error occurred when opening the file.")
 		Return Null
 	EndIf
-	Local $sFileRead
+	Local $sFileData
 	Switch $sReadType
 		Case $FO_READ
-			$sFileRead = FileRead($hFileOpen)
+			$sFileData = FileRead($hFileOpen)
 			If @error Then
 				MsgBox(4096, "Warming", "An error occurred when reading the file.")
+				FileClose($hFileOpen)
 				Return Null
 			EndIf
 		Case Else
-			$sFileRead = FileWrite($sPath, $sData)
+			$sFileData = FileWrite($sPath, $sData)
 			If @error Then
 				MsgBox(4096, "Warming", "An error occurred when writing the file.")
+				FileClose($hFileOpen)
 				Return Null
 			EndIf		
 	EndSwitch
-	
 	FileClose($hFileOpen)
-	
-	Return $sFileRead
+	If $sFileData Then Return $sFileData
+	;~ Else
+	;~ 	Return Null
+	;~ EndIf
 EndFunc
 
 Func _GetNameFromPath($sPath)
