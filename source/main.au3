@@ -31,9 +31,9 @@ Global $sMainFileName = ""
 Global $sMainData = ""
 #EndRegion ### Variables section ###
 
-#include "MenuItemFile.au3"
-#include "MenuItemEdit.au3"
-#include "MenuItemAbout.au3"
+#include "module/MenuItemFile.au3"
+#include "module/MenuItemEdit.au3"
+#include "module/MenuItemAbout.au3"
 
 Opt("GUIResizeMode", $GUI_DOCKAUTO)
 
