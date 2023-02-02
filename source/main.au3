@@ -47,6 +47,7 @@ $SubMenuItemSave = GUICtrlCreateMenuItem("Save", $MenuItemFile)
 If Not $bIfExternalFileConnected Then GUICtrlSetState(-1, $GUI_DISABLE)
 $SubMenuItemSaveAs = GUICtrlCreateMenuItem("Save As..", $MenuItemFile)
 $SubMenuItemOpen = GUICtrlCreateMenuItem("Open...", $MenuItemFile)
+Dim $aMainForm_AccelTable[3][2] = [["^s", $SubMenuItemSave],["^+s", $SubMenuItemSaveAs],["^o", $SubMenuItemOpen]]
 $SubMenuItemConfig = GUICtrlCreateMenuItem("Edit config", $MenuItemFile)
 GUICtrlCreateMenuItem("", $MenuItemFile)
 $SubMenuItemExit = GUICtrlCreateMenuItem("Exit", $MenuItemFile)
@@ -55,13 +56,21 @@ $MenuItemEdit = GUICtrlCreateMenu("Edit")
 
 Local $i = 1
 Local $aSubMenuItemEdit[$aKeySection[0][0] + 1]
+Local $iAccelTableCount = UBound($aMainForm_AccelTable)
+ReDim $aMainForm_AccelTable[$iAccelTableCount + $aKeySection[0][0]][2]
+
 While $i <= $aKeySection[0][0]
 	$aSubMenuItemEdit[$i] = GUICtrlCreateMenuItem($aKeySection[$i][1] & " [" & $aKeySection[$i][0] & "]", $MenuItemEdit)
+	$aMainForm_AccelTable[$iAccelTableCount][0] = "{" & $aKeySection[$i][0] & "}"
+	$aMainForm_AccelTable[$iAccelTableCount][1] = $aSubMenuItemEdit[$i]
+	$iAccelTableCount += 1
 	$i += 1
 WEnd
 
 $MenuItemAbout = GUICtrlCreateMenu("?")
 $SubMenuItemAbout = GUICtrlCreateMenuItem("About", $MenuItemAbout)
+
+GUISetAccelerators($aMainForm_AccelTable)
 
 $StatusBar = _GUICtrlStatusBar_Create($MainForm)
 Dim $StatusBar_PartsWidth[2] = [50, -1]
@@ -120,6 +129,7 @@ WEnd
 #EndRegion ### MAIN ###
 
 #Region ### Functions ###
+
 Func _UpdateFormTitle()
 	If $bIfExternalFileConnected Then WinSetTitle($MainForm, "", $APPNAME & "  " & $sMainFileName)
 EndFunc
