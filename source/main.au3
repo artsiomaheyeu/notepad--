@@ -78,7 +78,7 @@ _GUICtrlStatusBar_SetParts($StatusBar, $StatusBar_PartsWidth)
 _GUICtrlStatusBar_SetText($StatusBar, "Ok", 0)
 _GUICtrlStatusBar_SetText($StatusBar, "Some status", 1)
 _GUICtrlStatusBar_SetMinHeight($StatusBar, 25)
-; TODO: Fix resizing bug
+GUIRegisterMsg($WM_SIZE, "WM_SIZE")
 
 $MainEdit = GUICtrlCreateEdit("", 1, 1, $APPSIZE[0] - 2, $APPSIZE[1] - 49, BitOR($GUI_SS_DEFAULT_EDIT, $WS_BORDER))
 GUICtrlSetResizing($MainEdit, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKBOTTOM)
@@ -144,4 +144,12 @@ Func _ChangeItemStatusTo($bStatus)
 		EndIf
 	EndIf
 EndFunc
+
+; Resize the status bar when GUI size changes
+Func WM_SIZE($hWnd, $iMsg, $wParam, $lParam)
+	#forceref $hWnd, $iMsg, $wParam, $lParam
+	_GUICtrlStatusBar_Resize($StatusBar)
+	Return $GUI_RUNDEFMSG
+EndFunc 
+
 #EndRegion ### Functions ###
