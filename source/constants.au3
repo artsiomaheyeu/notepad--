@@ -20,4 +20,6 @@ Global Const $BOXMAIL 		= "artiom.ageev@gmail.com"
 Global Const $REPURL 		= "https://github.com/artsiomaheyeu/notepad--.git"
 Global Const $BUILDFOLDER 	= "/build"
 
-Global Const $APPSIZE[2] 	= [1128, 246] ; [width, height] 
+Global Const $APPSIZE[2] 	= [1128, 246] ; [width, height]
+Global Const $DEFUNSAFENAME = "Untitled"
+Global Const $SEPARATOR 	= ";"

@@ -40,7 +40,7 @@ Global $sMainData = ""
 Opt("GUIResizeMode", $GUI_DOCKAUTO)
 
 #Region ### START Koda GUI section ### Form=FormDesigner.kxf
-Global $sHeaderName = $APPNAME & "  " & "Untitled"
+Global $sHeaderName = $APPNAME & "  " & $DEFUNSAFENAME
 $MainForm = GUICreate($sHeaderName, $APPSIZE[0], $APPSIZE[1], -1, -1, $WS_OVERLAPPEDWINDOW)
 
 $MenuItemFile = GUICtrlCreateMenu("File")
@@ -78,8 +78,6 @@ While $i <= $aKeySection[0][0]
 	$i += 1
 WEnd
 
-	_ArrayDisplay($aHotKeyTable)
-
 $MenuItemAbout = GUICtrlCreateMenu("?")
 $SubMenuItemAbout = GUICtrlCreateMenuItem("About", $MenuItemAbout)
 
@@ -94,9 +92,12 @@ GUIRegisterMsg($WM_SIZE, "WM_SIZE")
 $MainEdit = GUICtrlCreateEdit("", 1, 1, $APPSIZE[0] - 2, $APPSIZE[1] - 49, BitOR($GUI_SS_DEFAULT_EDIT, $WS_BORDER))
 GUICtrlSetResizing($MainEdit, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKBOTTOM)
 
+;~ TODO:GUISetFont
+
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
+GUICtrlSetData($MainEdit, _InroductionData(), 1)
 HotKeySet("{Enter}", "_SetDataToEdit")
 
 #Region ### MAIN ###
@@ -142,6 +143,23 @@ WEnd
 #EndRegion ### MAIN ###
 
 #Region ### Functions ###
+Func _InroductionData()
+	$aTimeZoneInformation = _Date_Time_GetTimeZoneInformation()
+	Local $iBiasForLT = 1
+	Local $iUTC = $aTimeZoneInformation[$iBiasForLT] / 60
+	
+	Local $sReturn = "Recording date: " & @YEAR & "/" & @MON  & "/" & @MDAY & @CRLF & _
+					 "Recording time: " & @HOUR & ":" & @MIN & ":" & @SEC & "(UTC" 
+					If $iUTC > 0 Then $sReturn &="-"
+					If $iUTC < 0 Then $sReturn &="+"
+					$sReturn &= Abs($iUTC) & ")" & @CRLF & _
+					 "Time Offset: 0 ms" & @CRLF & _
+					 "Study: " & $DEFUNSAFENAME & @CRLF & _
+					 "Recording: " & @UserName & @CRLF & _
+					 @CRLF & _
+					 "Absolut Time" & $SEPARATOR & "Actions" & $SEPARATOR & "Comment"
+	Return $sReturn
+EndFunc
 
 Func _UpdateFormTitle()
 	If $bIfExternalFileConnected Then WinSetTitle($MainForm, "", $APPNAME & "  " & $sMainFileName)
