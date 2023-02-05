@@ -21,6 +21,8 @@
 #include <GUIConstantsEx.au3>
 #include <GuiStatusBar.au3>
 #include <WindowsConstants.au3>
+#include <Date.au3>
+
 
 #Region ### Variables section ###
 #include "constants.au3"
@@ -48,6 +50,7 @@ If Not $bIfExternalFileConnected Then GUICtrlSetState(-1, $GUI_DISABLE)
 $SubMenuItemSaveAs = GUICtrlCreateMenuItem("Save As..", $MenuItemFile)
 $SubMenuItemOpen = GUICtrlCreateMenuItem("Open...", $MenuItemFile)
 Dim $aMainForm_AccelTable[3][2] = [["^s", $SubMenuItemSave],["^+s", $SubMenuItemSaveAs],["^o", $SubMenuItemOpen]]
+GUISetAccelerators($aMainForm_AccelTable)
 $SubMenuItemConfig = GUICtrlCreateMenuItem("Edit config", $MenuItemFile)
 GUICtrlCreateMenuItem("", $MenuItemFile)
 $SubMenuItemExit = GUICtrlCreateMenuItem("Exit", $MenuItemFile)
@@ -56,21 +59,29 @@ $MenuItemEdit = GUICtrlCreateMenu("Edit")
 
 Local $i = 1
 Local $aSubMenuItemEdit[$aKeySection[0][0] + 1]
-Local $iAccelTableCount = UBound($aMainForm_AccelTable)
-ReDim $aMainForm_AccelTable[$iAccelTableCount + $aKeySection[0][0]][2]
+Dim $aHotKeyTable[$aKeySection[0][0] + 1][2]
+$aHotKeyTable[0][0] = $aKeySection[0][0]
 
 While $i <= $aKeySection[0][0]
+	#cs 
+		$aKeySection returned from config module as array:
+		$aKeySection[0][0] = Number of rows
+		$aKeySection[i][0] = ist Key
+		$aKeySection[i][1] = ist Value
+	#ce
 	$aSubMenuItemEdit[$i] = GUICtrlCreateMenuItem($aKeySection[$i][1] & " [" & $aKeySection[$i][0] & "]", $MenuItemEdit)
-	$aMainForm_AccelTable[$iAccelTableCount][0] = "{" & $aKeySection[$i][0] & "}"
-	$aMainForm_AccelTable[$iAccelTableCount][1] = $aSubMenuItemEdit[$i]
-	$iAccelTableCount += 1
+	if $i > 0 Then 
+		$aHotKeyTable[$i][0] = "{" & $aKeySection[$i][0] & "}"
+		$aHotKeyTable[$i][1] = $aSubMenuItemEdit[$i]
+	EndIf
+	HotKeySet($aHotKeyTable[$i][0], "_SetDataToEdit")
 	$i += 1
 WEnd
 
+	_ArrayDisplay($aHotKeyTable)
+
 $MenuItemAbout = GUICtrlCreateMenu("?")
 $SubMenuItemAbout = GUICtrlCreateMenuItem("About", $MenuItemAbout)
-
-GUISetAccelerators($aMainForm_AccelTable)
 
 $StatusBar = _GUICtrlStatusBar_Create($MainForm)
 Dim $StatusBar_PartsWidth[2] = [50, -1]
@@ -85,6 +96,8 @@ GUICtrlSetResizing($MainEdit, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $G
 
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
+
+HotKeySet("{Enter}", "_SetDataToEdit")
 
 #Region ### MAIN ###
 While 1
@@ -152,4 +165,21 @@ Func WM_SIZE($hWnd, $iMsg, $wParam, $lParam)
 	Return $GUI_RUNDEFMSG
 EndFunc 
 
+Func _SetDataToEdit()
+	GUICtrlSetData($MainEdit, @CRLF & _AbsolutTimeStamp(@TAB), 1)
+	Switch @HotKeyPressed ; The last hotkey pressed.
+		Case "{ENTER}"
+			GUICtrlSetData($MainEdit, @TAB, 1)
+		Case Else
+			Local $iRow = _ArraySearch($aHotKeyTable, @HotKeyPressed)
+			Local $iColKey = 0
+			Local $iColValue = 1
+			Local $sText = SubMenuItemEdit($aKeySection[$iRow][$iColValue], $aKeySection[$iRow][$iColKey])
+			GUICtrlSetData($MainEdit, $sText & @TAB, 1)
+	EndSwitch
+EndFunc
+
+Func _AbsolutTimeStamp($sSeparator)
+	Return @YEAR & "-" & @MON  & "-" & @MDAY & $sSeparator & @HOUR & ":" & @MIN & ":" & @SEC & "." & @MSEC & $sSeparator
+EndFunc
 #EndRegion ### Functions ###
