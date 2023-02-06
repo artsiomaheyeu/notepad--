@@ -1,12 +1,13 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=icon.ico
-#AutoIt3Wrapper_Outfile=build\notepad--.exe
+#AutoIt3Wrapper_Outfile=D:\notepad--\notepad--\build\notepad--.exe
 #AutoIt3Wrapper_Res_Description=A simple text editor for logging test sessions
-#AutoIt3Wrapper_Res_Fileversion=0.0.0.5
+#AutoIt3Wrapper_Res_Fileversion=0.0.0.6
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=notepad--
 #AutoIt3Wrapper_Res_ProductVersion=0.1
 #AutoIt3Wrapper_Res_CompanyName=Aheyeu Artsiom
+#AutoIt3Wrapper_Run_After=copy "config.ini" "D:\notepad--\notepad--\build"
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #cs ----------------------------------------------------------------------------
 
@@ -22,7 +23,6 @@
 #include <GuiStatusBar.au3>
 #include <WindowsConstants.au3>
 #include <Date.au3>
-
 
 #Region ### Variables section ###
 #include "constants.au3"
@@ -45,22 +45,34 @@ $MainForm = GUICreate($sHeaderName, $APPSIZE[0], $APPSIZE[1], -1, -1, $WS_OVERLA
 
 $MenuItemFile = GUICtrlCreateMenu("File")
 GUICtrlSetState($MenuItemFile, $GUI_CHECKED)
-$SubMenuItemSave = GUICtrlCreateMenuItem("Save", $MenuItemFile)
-If Not $bIfExternalFileConnected Then GUICtrlSetState(-1, $GUI_DISABLE)
-$SubMenuItemSaveAs = GUICtrlCreateMenuItem("Save As..", $MenuItemFile)
-$SubMenuItemOpen = GUICtrlCreateMenuItem("Open...", $MenuItemFile)
-Dim $aMainForm_AccelTable[3][2] = [["^s", $SubMenuItemSave],["^+s", $SubMenuItemSaveAs],["^o", $SubMenuItemOpen]]
-GUISetAccelerators($aMainForm_AccelTable)
-$SubMenuItemConfig = GUICtrlCreateMenuItem("Edit config", $MenuItemFile)
+$SubMenuItemSave 	= GUICtrlCreateMenuItem("Save		      Ctrl+S", $MenuItemFile)
+$SubMenuItemSaveAs 	= GUICtrlCreateMenuItem("Save As..	Ctrl+Shift+S", $MenuItemFile)
+$SubMenuItemOpen 	= GUICtrlCreateMenuItem("Open..			  Ctrl+O", $MenuItemFile)
+$SubMenuItemConfig 	= GUICtrlCreateMenuItem("Edit config", $MenuItemFile)
 GUICtrlCreateMenuItem("", $MenuItemFile)
-$SubMenuItemExit = GUICtrlCreateMenuItem("Exit", $MenuItemFile)
+$SubMenuItemExit 	= GUICtrlCreateMenuItem("Exit", $MenuItemFile)
+
+If Not $bIfExternalFileConnected Then GUICtrlSetState($SubMenuItemSave, $GUI_DISABLE)
 
 $MenuItemEdit = GUICtrlCreateMenu("Edit")
 
+$MenuItemAbout = GUICtrlCreateMenu("?")
+$SubMenuItemAbout = GUICtrlCreateMenuItem("About", $MenuItemAbout)
+
+$FakeGUIEnter = GUICtrlCreateMenu("")
+GUICtrlSetState($FakeGUIEnter, $GUI_DISABLE)
+
+Dim $aMainForm_AccelTable[4][2] = [["^s", $SubMenuItemSave], _
+								   ["^+s", $SubMenuItemSaveAs], _ 
+								   ["^o", $SubMenuItemOpen], _
+								   ["{ENTER}", $FakeGUIEnter]]
+
 Local $i = 1
 Local $aSubMenuItemEdit[$aKeySection[0][0] + 1]
-Dim $aHotKeyTable[$aKeySection[0][0] + 1][2]
-$aHotKeyTable[0][0] = $aKeySection[0][0]
+Local $iColKey = 0
+Local $iColValue = 1
+Local $iAccelTableCount = UBound($aMainForm_AccelTable)
+ReDim $aMainForm_AccelTable[$iAccelTableCount + $aKeySection[0][0]][2]
 
 While $i <= $aKeySection[0][0]
 	#cs 
@@ -69,17 +81,14 @@ While $i <= $aKeySection[0][0]
 		$aKeySection[i][0] = ist Key
 		$aKeySection[i][1] = ist Value
 	#ce
-	$aSubMenuItemEdit[$i] = GUICtrlCreateMenuItem($aKeySection[$i][1] & " [" & $aKeySection[$i][0] & "]", $MenuItemEdit)
-	if $i > 0 Then 
-		$aHotKeyTable[$i][0] = "{" & $aKeySection[$i][0] & "}"
-		$aHotKeyTable[$i][1] = $aSubMenuItemEdit[$i]
-	EndIf
-	HotKeySet($aHotKeyTable[$i][0], "_SetDataToEdit")
+	$aSubMenuItemEdit[$i] = GUICtrlCreateMenuItem($aKeySection[$i][$iColValue] & " [" & $aKeySection[$i][$iColKey] & "]", $MenuItemEdit)
+	$aMainForm_AccelTable[$iAccelTableCount][$iColKey] = "{" & $aKeySection[$i][$iColKey] & "}"
+	$aMainForm_AccelTable[$iAccelTableCount][$iColValue] = $aSubMenuItemEdit[$i]
+	$iAccelTableCount += 1
 	$i += 1
 WEnd
-
-$MenuItemAbout = GUICtrlCreateMenu("?")
-$SubMenuItemAbout = GUICtrlCreateMenuItem("About", $MenuItemAbout)
+if $DEBUG Then _ArrayDisplay($aMainForm_AccelTable)
+GUISetAccelerators($aMainForm_AccelTable)
 
 $StatusBar = _GUICtrlStatusBar_Create($MainForm)
 Dim $StatusBar_PartsWidth[2] = [50, -1]
@@ -98,7 +107,6 @@ GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
 GUICtrlSetData($MainEdit, _InroductionData(), 1)
-HotKeySet("{Enter}", "_SetDataToEdit")
 
 #Region ### MAIN ###
 While 1
@@ -136,8 +144,10 @@ While 1
 		Case $SubMenuItemAbout
 			SubMenuItemAbout()
 		Case $aSubMenuItemEdit[1] to $aSubMenuItemEdit[UBound($aSubMenuItemEdit) - 1]
-			$vElement = _ArraySearch($aSubMenuItemEdit, $nMsg)		
-			SubMenuItemEdit($aKeySection[$vElement][1], $aKeySection[$vElement][0])
+			$iRow = _ArraySearch($aSubMenuItemEdit, $nMsg)		
+			GUICtrlSetData($MainEdit, _AbsolutTimeStamp() & SubMenuItemEdit($aKeySection[$iRow][$iColValue], $aKeySection[$iRow][$iColKey]) & $SEPARATOR, 1)
+		Case $FakeGUIEnter
+			GUICtrlSetData($MainEdit, _AbsolutTimeStamp(), 1)
 	EndSwitch
 WEnd
 #EndRegion ### MAIN ###
@@ -183,21 +193,7 @@ Func WM_SIZE($hWnd, $iMsg, $wParam, $lParam)
 	Return $GUI_RUNDEFMSG
 EndFunc 
 
-Func _SetDataToEdit()
-	GUICtrlSetData($MainEdit, @CRLF & _AbsolutTimeStamp(@TAB), 1)
-	Switch @HotKeyPressed ; The last hotkey pressed.
-		Case "{ENTER}"
-			GUICtrlSetData($MainEdit, @TAB, 1)
-		Case Else
-			Local $iRow = _ArraySearch($aHotKeyTable, @HotKeyPressed)
-			Local $iColKey = 0
-			Local $iColValue = 1
-			Local $sText = SubMenuItemEdit($aKeySection[$iRow][$iColValue], $aKeySection[$iRow][$iColKey])
-			GUICtrlSetData($MainEdit, $sText & @TAB, 1)
-	EndSwitch
-EndFunc
-
-Func _AbsolutTimeStamp($sSeparator)
-	Return @YEAR & "-" & @MON  & "-" & @MDAY & $sSeparator & @HOUR & ":" & @MIN & ":" & @SEC & "." & @MSEC & $sSeparator
+Func _AbsolutTimeStamp()
+	Return @CRLF & @HOUR & ":" & @MIN & ":" & @SEC & "." & @MSEC & $SEPARATOR
 EndFunc
 #EndRegion ### Functions ###
