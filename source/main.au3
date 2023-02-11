@@ -87,7 +87,7 @@ While $i <= $aKeySection[0][0]
 	$iAccelTableCount += 1
 	$i += 1
 WEnd
-if $DEBUG Then _ArrayDisplay($aMainForm_AccelTable)
+if $DEBUG Then _ArrayDisplay($aMainForm_AccelTable, "HotKeys","",0, Default,"Key|control ID")
 GUISetAccelerators($aMainForm_AccelTable)
 
 $StatusBar = _GUICtrlStatusBar_Create($MainForm)
@@ -101,7 +101,7 @@ GUIRegisterMsg($WM_SIZE, "WM_SIZE")
 $MainEdit = GUICtrlCreateEdit("", 1, 1, $APPSIZE[0] - 2, $APPSIZE[1] - 49, BitOR($GUI_SS_DEFAULT_EDIT, $WS_BORDER))
 GUICtrlSetResizing($MainEdit, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKBOTTOM)
 
-;~ TODO:GUISetFont
+GUICtrlSetFont ($MainEdit, $FONTSIZE, $FONTWEIGHT, $FONTATTRIBUT, $FONTNAME)
 
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###

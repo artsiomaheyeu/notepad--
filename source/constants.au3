@@ -22,4 +22,3 @@ Global Const $BUILDFOLDER 	= "/build"
 
 Global Const $APPSIZE[2] 	= [1128, 246] ; [width, height]
 Global Const $DEFUNSAFENAME = "Untitled"
-Global Const $SEPARATOR 	= ";"
