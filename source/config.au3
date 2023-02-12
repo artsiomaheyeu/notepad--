@@ -10,24 +10,28 @@
 
 #include <Array.au3>
 
-Global $aBasicSection = _ReadINISection($INI, $INIDEFAULSTS)
+If Not FileExists($INI) Then FileWrite($INI, "# Config file for notepad--")
 
-Global $bWriteFlag = False
-
-Global Const $BLOCKCOUNTS 	= _GetVar($aBasicSection, "BlocksCounts", 1)
-Global Const $SEPARATOR 	= _GetVar($aBasicSection, "Separator", ";")
-Global Const $FONTNAME 		= _GetVar($aBasicSection, "FontName", "Arial")
-Global Const $FONTSIZE 		= _GetVar($aBasicSection, "FontSize", 8.5)
-Global Const $FONTWEIGHT 	= _GetVar($aBasicSection, "FontWeight", 400)
-Global Const $FONTATTRIBUT 	= _GetVar($aBasicSection, "FontAttribute", 0)
-
-If $bWriteFlag Then
-	MsgBox($MB_ICONINFORMATION,"Info", "Update parameters in " & $INI)
-	_WriteINISection($INI, $INIDEFAULSTS, $aBasicSection)
-	_ArrayDisplay($aBasicSection)
+Local $aSectionNames = IniReadSectionNames($INI)
+If IsArray($aSectionNames) or $aSectionNames = 1 Then
+	If _ArraySearch($aSectionNames, $INIDEFAULSTS) == -1 Then IniWriteSection($INI, $INIDEFAULSTS, "")
+	If _ArraySearch($aSectionNames, $INIKEYS) == -1 Then IniWriteSection($INI, $INIKEYS, "")
 EndIf
 
+Global Const $BLOCKCOUNTS 	= _GetVar("BlocksCounts", 1)
+Global Const $SEPARATOR 	= _GetVar("Separator", ";")
+Global Const $FONTNAME 		= _GetVar("FontName", "Calibri")
+Global Const $FONTSIZE 		= _GetVar("FontSize", 11)
+Global Const $FONTWEIGHT 	= _GetVar("FontWeight", 400)
+Global Const $FONTATTRIBUT 	= _GetVar("FontAttribute", 0)
+
 Global $aKeySection = _ReadINISection($INI, $INIKEYS)
+
+For $i=0 To Ubound($aSectionNames) - 1
+	Local $iRow = _ArraySearch($aKeySection, $aSectionNames[$i])
+	;### Debug CONSOLE ↓↓↓
+	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $iRow = ' & $iRow & @CRLF & '>Error code: ' & @error & @CRLF)
+Next
 
 Func _ReadINISection($sFileName, $sSectionName)
 	Local $aValueSection = IniReadSection($sFileName, $sSectionName)
@@ -35,36 +39,13 @@ Func _ReadINISection($sFileName, $sSectionName)
 		if $DEBUG Then _ArrayDisplay($aValueSection, $sSectionName)
 		Return $aValueSection
 	Else
-		MsgBox(4096, "Error", "An error has occurred, the " & $sFileName & " file may be missing or the section " & $sSectionName & " may not exist or is empty")
 		if $DEBUG  Then ConsoleWriteError("ERROR:_ReadINISection" & @CRLF)
-		Exit
+		Return Null
 	EndIf
 EndFunc
 
-Func _WriteINISection($sFileName, $sSectionName, $aData)
-	Local $aValueSection = IniWriteSection($sFileName, $sSectionName, $aData)
-	If Not @error Then
-		if $DEBUG Then _ArrayDisplay($aValueSection, $sSectionName)
-		Return $aValueSection
-	Else
-		MsgBox(4096, "Error" & $sFileName, "An error has occurred, may be the data format is invalid")
-		if $DEBUG  Then ConsoleWriteError("ERROR:_WriteINISection" & @CRLF)
-		Exit
-	EndIf
-EndFunc
-
-Func _GetVar($aArray, $sKeyName, $vDefault)
-	Local $iKey 	= 0
-	Local $iValue 	= 1
-	Local $Return 	= $vDefault
-	Local $iRow 	= _ArraySearch($aArray, $sKeyName)
-	If Not @error Then 
-		$Return = $aArray[$iRow][1]
-	Else
-		$bWriteFlag = True
-		ReDim $aBasicSection[UBound($aBasicSection) + 1][2] 
-		$aBasicSection[UBound($aBasicSection) - 1][$iKey] = $sKeyName
-		$aBasicSection[UBound($aBasicSection) - 1][$iValue] = $vDefault
-	EndIf
-	Return $Return
+Func _GetVar($sKeyName, $vDefault)
+	Local $vReturn = IniRead($INI, $INIDEFAULSTS, $sKeyName, $vDefault)
+	If $vReturn == $vDefault Then IniWrite($INI, $INIDEFAULSTS, $sKeyName, $vDefault)
+	Return $vReturn
 EndFunc

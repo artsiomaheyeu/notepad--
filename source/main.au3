@@ -2,7 +2,7 @@
 #AutoIt3Wrapper_Icon=icon.ico
 #AutoIt3Wrapper_Outfile=D:\notepad--\notepad--\build\notepad--.exe
 #AutoIt3Wrapper_Res_Description=A simple text editor for logging test sessions
-#AutoIt3Wrapper_Res_Fileversion=0.0.0.6
+#AutoIt3Wrapper_Res_Fileversion=0.0.0.7
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=notepad--
 #AutoIt3Wrapper_Res_ProductVersion=0.1
@@ -67,26 +67,32 @@ Dim $aMainForm_AccelTable[4][2] = [["^s", $SubMenuItemSave], _
 								   ["^o", $SubMenuItemOpen], _
 								   ["{ENTER}", $FakeGUIEnter]]
 
-Local $i = 1
-Local $aSubMenuItemEdit[$aKeySection[0][0] + 1]
-Local $iColKey = 0
-Local $iColValue = 1
-Local $iAccelTableCount = UBound($aMainForm_AccelTable)
-ReDim $aMainForm_AccelTable[$iAccelTableCount + $aKeySection[0][0]][2]
+If IsArray($aKeySection)  Then
+	Local $i = 1
+	Local $aSubMenuItemEdit[$aKeySection[0][0] + 1]
+	Local $iColKey = 0
+	Local $iColValue = 1
+	Local $iAccelTableCount = UBound($aMainForm_AccelTable)
+	ReDim $aMainForm_AccelTable[$iAccelTableCount + $aKeySection[0][0]][2]
 
-While $i <= $aKeySection[0][0]
-	#cs 
-		$aKeySection returned from config module as array:
-		$aKeySection[0][0] = Number of rows
-		$aKeySection[i][0] = ist Key
-		$aKeySection[i][1] = ist Value
-	#ce
-	$aSubMenuItemEdit[$i] = GUICtrlCreateMenuItem($aKeySection[$i][$iColValue] & " [" & $aKeySection[$i][$iColKey] & "]", $MenuItemEdit)
-	$aMainForm_AccelTable[$iAccelTableCount][$iColKey] = "{" & $aKeySection[$i][$iColKey] & "}"
-	$aMainForm_AccelTable[$iAccelTableCount][$iColValue] = $aSubMenuItemEdit[$i]
-	$iAccelTableCount += 1
-	$i += 1
-WEnd
+	While $i <= $aKeySection[0][0]
+		#cs 
+			$aKeySection returned from config module as array:
+			$aKeySection[0][0] = Number of rows
+			$aKeySection[i][0] = ist Key
+			$aKeySection[i][1] = ist Value
+		#ce
+		$aSubMenuItemEdit[$i] = GUICtrlCreateMenuItem($aKeySection[$i][$iColValue] & " [" & $aKeySection[$i][$iColKey] & "]", $MenuItemEdit)
+		$aMainForm_AccelTable[$iAccelTableCount][$iColKey] = "{" & $aKeySection[$i][$iColKey] & "}"
+		$aMainForm_AccelTable[$iAccelTableCount][$iColValue] = $aSubMenuItemEdit[$i]
+		$iAccelTableCount += 1
+		$i += 1
+	WEnd
+Else
+	Dim $aSubMenuItemEdit[2] = [0, -1]
+	GUICtrlSetState($MenuItemEdit, $GUI_DISABLE)
+EndIf
+
 if $DEBUG Then _ArrayDisplay($aMainForm_AccelTable, "HotKeys","",0, Default,"Key|control ID")
 GUISetAccelerators($aMainForm_AccelTable)
 
@@ -144,10 +150,10 @@ While 1
 		Case $SubMenuItemAbout
 			SubMenuItemAbout()
 		Case $aSubMenuItemEdit[1] to $aSubMenuItemEdit[UBound($aSubMenuItemEdit) - 1]
-			$iRow = _ArraySearch($aSubMenuItemEdit, $nMsg)		
+			$iRow = _ArraySearch($aSubMenuItemEdit, $nMsg)
 			GUICtrlSetData($MainEdit, _AbsolutTimeStamp() & SubMenuItemEdit($aKeySection[$iRow][$iColValue], $aKeySection[$iRow][$iColKey]) & $SEPARATOR, 1)
 		Case $FakeGUIEnter
-			GUICtrlSetData($MainEdit, _AbsolutTimeStamp(), 1)
+			GUICtrlSetData($MainEdit, _AbsolutTimeStamp() & _BlockCounts(), 1)
 	EndSwitch
 WEnd
 #EndRegion ### MAIN ###
@@ -165,7 +171,7 @@ Func _InroductionData()
 					$sReturn &= Abs($iUTC) & ")" & @CRLF & _
 					 "Time Offset: 0 ms" & @CRLF & _
 					 "Study: " & $DEFUNSAFENAME & @CRLF & _
-					 "Recording: " & @UserName & @CRLF & _
+					 "Recording: " & $DEFAUTHOR & @CRLF & _
 					 @CRLF & _
 					 "Absolut Time" & $SEPARATOR & "Actions" & $SEPARATOR & "Comment"
 	Return $sReturn
@@ -195,5 +201,13 @@ EndFunc
 
 Func _AbsolutTimeStamp()
 	Return @CRLF & @HOUR & ":" & @MIN & ":" & @SEC & "." & @MSEC & $SEPARATOR
+EndFunc
+
+Func _BlockCounts()
+	$sReturn = ""
+	For $i = 1 to $BLOCKCOUNTS
+		$sReturn &= $DEFAUTHOR & $SEPARATOR
+	Next
+	Return $sReturn
 EndFunc
 #EndRegion ### Functions ###
