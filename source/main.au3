@@ -107,8 +107,7 @@ _GUICtrlStatusBar_SetMinHeight($StatusBar, 25)
 GUIRegisterMsg($WM_SIZE, "WM_SIZE")
 
 $MainEdit = GUICtrlCreateEdit("", 1, 1, $APPSIZE[0] - 2, $APPSIZE[1] - 49, BitOR($GUI_SS_DEFAULT_EDIT, $WS_BORDER))
-GUICtrlSetResizing($MainEdit, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKBOTTOM)
-
+GUICtrlSendMsg($MainEdit, $EM_LIMITTEXT, -1, 0)
 GUICtrlSetFont($MainEdit, $FONTSIZE, $FONTWEIGHT, $FONTATTRIBUT, $FONTNAME)
 
 GUISetState(@SW_SHOW)
