@@ -2,7 +2,7 @@
 #AutoIt3Wrapper_Icon=icon.ico
 #AutoIt3Wrapper_Outfile=D:\notepad--\notepad--\build\notepad--.exe
 #AutoIt3Wrapper_Res_Description=A simple text editor for logging test sessions
-#AutoIt3Wrapper_Res_Fileversion=0.0.0.9
+#AutoIt3Wrapper_Res_Fileversion=0.0.0.10
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=notepad--
 #AutoIt3Wrapper_Res_ProductVersion=1.0
@@ -182,6 +182,7 @@ WEnd
 
 #Region ### Functions ###
 Func _InroductionData()
+	If Not $ISINRTO Then Return Null
 	$aTimeZoneInformation = _Date_Time_GetTimeZoneInformation()
 	Local $iBiasForLT = 1
 	Local $iUTC = $aTimeZoneInformation[$iBiasForLT] / 60
