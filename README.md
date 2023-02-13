@@ -75,10 +75,11 @@ Test and [send me] not only bugs but also wishes, best wishes;)
 
 MIT
 
+
 **Free Software, Hell Yeah!**
 
    [AutoIt v3.3.14.5]: <https://www.autoitscript.com>
-   [Download]: <https://github.com/artsiomaheyeu/notepad--/blob/main/build/Notepadmm_WIN1.0_setup.exe>
+   [Download]: <https://github.com/artsiomaheyeu/notepad--/raw/2bb8f9ecf59700adec713e20440eb4e17b5d6772/build/Notepadmm_WIN1.0_setup.exe>
    [Release history]: <https://github.com/artsiomaheyeu/notepad--/blob/23d5480f820d5e2f38a8d65a4a07269b36823d61/build/release_note.txt>
    [Portable version]: <https://github.com/artsiomaheyeu/notepad--/blob/main/build/Notepadmm_WIN1.0.zip>
    [The executable installer]: <https://github.com/artsiomaheyeu/notepad--/blob/main/build/Notepadmm_WIN1.0_setup.exe>
