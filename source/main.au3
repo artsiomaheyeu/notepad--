@@ -2,12 +2,13 @@
 #AutoIt3Wrapper_Icon=icon.ico
 #AutoIt3Wrapper_Outfile=D:\notepad--\notepad--\build\notepad--.exe
 #AutoIt3Wrapper_Res_Description=A simple text editor for logging test sessions
-#AutoIt3Wrapper_Res_Fileversion=0.0.0.10
+#AutoIt3Wrapper_Res_Fileversion=0.0.0.11
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=notepad--
 #AutoIt3Wrapper_Res_ProductVersion=1.0
 #AutoIt3Wrapper_Res_CompanyName=Aheyeu Artsiom
 #AutoIt3Wrapper_Run_After=copy "config.ini" "D:\notepad--\notepad--\build"
+#AutoIt3Wrapper_Run_After=start "D:\notepad--\notepad--\source\third-party\build.bat"
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #cs ----------------------------------------------------------------------------
 
@@ -23,6 +24,7 @@
 #include <GuiStatusBar.au3>
 #include <WindowsConstants.au3>
 #include <Date.au3>
+#include <GuiEdit.au3>
 
 #Region ### Variables section ###
 #include "constants.au3"
@@ -135,13 +137,13 @@ While 1
 					$bIsStadyNamed = True
 					$bOpbservationStatus = True
 					GUICtrlSetData($MainEdit, StringReplace(GUICtrlRead($MainEdit), $DEFUNSAFENAME, $sObservationName))
-					GUICtrlSetData($MainEdit, _AbsolutTimeStamp() & "Status changed" & $SEPARATOR & "Observation started", 1)
+					_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & "Status changed" & $SEPARATOR & "Observation started")
 					GUICtrlSetData($SubMenuItemStartStop, "Stop observation     Shift+Alt+S")
 				EndIf
 			Else
 				If SubMenuItemStop($MainForm) Then
 					$bOpbservationStatus = False
-					GUICtrlSetData($MainEdit, _AbsolutTimeStamp() & "Status changed" & $SEPARATOR & "Observation stopped", 1)
+					_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & "Status changed" & $SEPARATOR & "Observation stopped")
 					GUICtrlSetData($SubMenuItemStartStop, "Start observation... Shift+Alt+S")
 				EndIf
 			EndIf
@@ -173,9 +175,9 @@ While 1
 			SubMenuItemAbout()
 		Case $aSubMenuItemEdit[1] to $aSubMenuItemEdit[UBound($aSubMenuItemEdit) - 1]
 			$iRow = _ArraySearch($aSubMenuItemEdit, $nMsg)
-			GUICtrlSetData($MainEdit, _AbsolutTimeStamp() & SubMenuItemEdit($aKeySection[$iRow][$iColValue], $aKeySection[$iRow][$iColKey]) & $SEPARATOR, 1)
+			_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & SubMenuItemEdit($aKeySection[$iRow][$iColValue], $aKeySection[$iRow][$iColKey]) & $SEPARATOR)
 		Case $FakeGUIEnter
-			GUICtrlSetData($MainEdit, _AbsolutTimeStamp() & _BlockCounts(), 1)
+			_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _BlockCounts())
 	EndSwitch
 WEnd
 #EndRegion ### MAIN ###
