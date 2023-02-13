@@ -32,6 +32,8 @@ Global $sMainFilePath = ""
 Global $sMainFileName = ""
 Global $sMainData = ""
 Global $bOpbservationStatus = False
+Local $sObservationName = $DEFUNSAFENAME
+Local $bIsStadyNamed = False
 #EndRegion ### Variables section ###
 
 #include "module/MenuItemFile.au3"
@@ -41,7 +43,7 @@ Global $bOpbservationStatus = False
 Opt("GUIResizeMode", $GUI_DOCKAUTO)
 
 #Region ### START Koda GUI section ### Form=FormDesigner.kxf
-Global $sHeaderName = $APPNAME & "  " & $DEFUNSAFENAME
+Global $sHeaderName = $APPNAME & "  " & $sObservationName & "*"
 $MainForm = GUICreate($sHeaderName, $APPSIZE[0], $APPSIZE[1], -1, -1, $WS_OVERLAPPEDWINDOW)
 
 $MenuItemFile = GUICtrlCreateMenu("File")
@@ -56,7 +58,7 @@ $SubMenuItemExit 	= GUICtrlCreateMenuItem("Exit", $MenuItemFile)
 If Not $bIfExternalFileConnected Then GUICtrlSetState($SubMenuItemSave, $GUI_DISABLE)
 
 $MenuItemEdit = GUICtrlCreateMenu("Edit")
-$SubMenuItemStartStop = GUICtrlCreateMenuItem("Start observation...   ", $MenuItemEdit)
+$SubMenuItemStartStop = GUICtrlCreateMenuItem("Start observation... Shift+Alt+S", $MenuItemEdit)
 
 $MenuItemAbout = GUICtrlCreateMenu("?")
 $SubMenuItemAbout = GUICtrlCreateMenuItem("About", $MenuItemAbout)
@@ -64,10 +66,11 @@ $SubMenuItemAbout = GUICtrlCreateMenuItem("About", $MenuItemAbout)
 $FakeGUIEnter = GUICtrlCreateMenu("")
 GUICtrlSetState($FakeGUIEnter, $GUI_DISABLE)
 
-Dim $aMainForm_AccelTable[4][2] = [["^s", $SubMenuItemSave], _
-								   ["^+s", $SubMenuItemSaveAs], _ 
-								   ["^o", $SubMenuItemOpen], _
-								   ["{ENTER}", $FakeGUIEnter]]
+Dim $aMainForm_AccelTable[5][2] = [["^s", $SubMenuItemSave], _  		; Ctrl+S
+								   ["^+s", $SubMenuItemSaveAs], _ 		; Ctrl+Shift+S
+								   ["^o", $SubMenuItemOpen], _			; Ctrl+O
+								   ["+!s", $SubMenuItemStartStop], _  	; Shift-Alt-s
+								   ["{ENTER}", $FakeGUIEnter]] 			; Enter
 
 If IsArray($aKeySection)  Then
 	Local $i = 1
@@ -126,22 +129,23 @@ While 1
 			SubMenuItemExit(GUICtrlRead($MainEdit), $MainForm)
 			Exit
 		Case $SubMenuItemStartStop
-			if $bOpbservationStatus = False Then 
-				$sObservationName = SubMenuItemStart($MainForm)
+			if $bOpbservationStatus = False Then
+				If Not $bIsStadyNamed Then $sObservationName = SubMenuItemStart($MainForm)
 				If $sObservationName Then
+					$bIsStadyNamed = True
 					$bOpbservationStatus = True
 					GUICtrlSetData($MainEdit, StringReplace(GUICtrlRead($MainEdit), $DEFUNSAFENAME, $sObservationName))
 					GUICtrlSetData($MainEdit, _AbsolutTimeStamp() & "Status changed" & $SEPARATOR & "Observation started", 1)
-					GUICtrlSetData($SubMenuItemStartStop, "Stop observation")
+					GUICtrlSetData($SubMenuItemStartStop, "Stop observation     Shift+Alt+S")
 				EndIf
 			Else
 				If SubMenuItemStop($MainForm) Then
 					$bOpbservationStatus = False
-					GUICtrlSetData($MainEdit, _AbsolutTimeStamp() & "Status changed" & $SEPARATOR & "Observation stoped", 1)
-					GUICtrlSetData($SubMenuItemStartStop, "Start observation...")
+					GUICtrlSetData($MainEdit, _AbsolutTimeStamp() & "Status changed" & $SEPARATOR & "Observation stopped", 1)
+					GUICtrlSetData($SubMenuItemStartStop, "Start observation... Shift+Alt+S")
 				EndIf
 			EndIf
-			
+			_UpdateFormTitle()
 		Case $SubMenuItemSave
 			if $bIfExternalFileConnected Then
 		    	$sMainData = GUICtrlRead($MainEdit)
@@ -196,7 +200,13 @@ Func _InroductionData()
 EndFunc
 
 Func _UpdateFormTitle()
-	If $bIfExternalFileConnected Then WinSetTitle($MainForm, "", $APPNAME & "  " & $sMainFileName)
+	$sHeaderName = $APPNAME & "  " & $sObservationName
+	If $bIfExternalFileConnected Then 
+		$sHeaderName &= ": " & $sMainFileName
+	Else
+		$sHeaderName &= "*"
+	EndIf
+	WinSetTitle($MainForm, "", $sHeaderName)
 EndFunc
 
 Func _ChangeItemStatusTo($bStatus)
