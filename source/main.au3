@@ -31,6 +31,7 @@ Global $bIfExternalFileConnected = False ; [True|False]
 Global $sMainFilePath = ""
 Global $sMainFileName = ""
 Global $sMainData = ""
+Global $bOpbservationStatus = False
 #EndRegion ### Variables section ###
 
 #include "module/MenuItemFile.au3"
@@ -45,6 +46,7 @@ $MainForm = GUICreate($sHeaderName, $APPSIZE[0], $APPSIZE[1], -1, -1, $WS_OVERLA
 
 $MenuItemFile = GUICtrlCreateMenu("File")
 GUICtrlSetState($MenuItemFile, $GUI_CHECKED)
+$SubMenuItemStartStop 	= GUICtrlCreateMenuItem("Start observation...   ", $MenuItemFile)
 $SubMenuItemSave 	= GUICtrlCreateMenuItem("Save		      Ctrl+S", $MenuItemFile)
 $SubMenuItemSaveAs 	= GUICtrlCreateMenuItem("Save As..	Ctrl+Shift+S", $MenuItemFile)
 $SubMenuItemOpen 	= GUICtrlCreateMenuItem("Open..			  Ctrl+O", $MenuItemFile)
@@ -107,7 +109,7 @@ GUIRegisterMsg($WM_SIZE, "WM_SIZE")
 $MainEdit = GUICtrlCreateEdit("", 1, 1, $APPSIZE[0] - 2, $APPSIZE[1] - 49, BitOR($GUI_SS_DEFAULT_EDIT, $WS_BORDER))
 GUICtrlSetResizing($MainEdit, $GUI_DOCKLEFT + $GUI_DOCKRIGHT + $GUI_DOCKTOP + $GUI_DOCKBOTTOM)
 
-GUICtrlSetFont ($MainEdit, $FONTSIZE, $FONTWEIGHT, $FONTATTRIBUT, $FONTNAME)
+GUICtrlSetFont($MainEdit, $FONTSIZE, $FONTWEIGHT, $FONTATTRIBUT, $FONTNAME)
 
 GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
@@ -124,6 +126,23 @@ While 1
 		Case $GUI_EVENT_CLOSE 
 			SubMenuItemExit(GUICtrlRead($MainEdit), $MainForm)
 			Exit
+		Case $SubMenuItemStartStop
+			if $bOpbservationStatus = False Then 
+				$sObservationName = SubMenuItemStart($MainForm)
+				If $sObservationName Then
+					$bOpbservationStatus = True
+					;~ GUICtrlSetData($MainEdit, @CRLF & _InroductionData($sObservationName), 1)
+					GUICtrlSetData($MainEdit, _AbsolutTimeStamp() & "Status changed" & $SEPARATOR & "Observation started", 1)
+					GUICtrlSetData($SubMenuItemStartStop, "Stop observation")
+				EndIf
+			Else
+				If SubMenuItemStop($MainForm) Then
+					$bOpbservationStatus = False
+					GUICtrlSetData($MainEdit, _AbsolutTimeStamp() & "Status changed" & $SEPARATOR & "Observation stoped", 1)
+					GUICtrlSetData($SubMenuItemStartStop, "Start observation...")
+				EndIf
+			EndIf
+			
 		Case $SubMenuItemSave
 			if $bIfExternalFileConnected Then
 		    	$sMainData = GUICtrlRead($MainEdit)
