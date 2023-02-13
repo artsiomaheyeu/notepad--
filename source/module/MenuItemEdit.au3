@@ -14,12 +14,12 @@ EndFunc
 
 Func SubMenuItemStart($hGUI)
 	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemStart) & @CRLF)
-	Return InputBox("Question?", "Enter the name of your observation subject:", $DEFUNSAFENAME,"",-1,-1,Default,Default, 0, $hGUI)
+	Return InputBox("Enter the name", "Enter the name of your observation subject:", $DEFUNSAFENAME,"",-1,-1,Default,Default, 0, $hGUI)
 EndFunc
 
 Func SubMenuItemStop($hGUI)
 	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemStop) & @CRLF)
-	Local $iAnswer = MsgBox($MB_YESNO, "Qustion?", "Do you want to stop observation?", 0, $hGUI)
+	Local $iAnswer = MsgBox(BitOR($MB_YESNO, $MB_ICONQUESTION), "Stop observation", "Do you really want to stop observation?", 0, $hGUI)
 	If $iAnswer == $IDNO Then Return False
 	Return True
 EndFunc

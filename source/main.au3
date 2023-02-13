@@ -2,10 +2,10 @@
 #AutoIt3Wrapper_Icon=icon.ico
 #AutoIt3Wrapper_Outfile=D:\notepad--\notepad--\build\notepad--.exe
 #AutoIt3Wrapper_Res_Description=A simple text editor for logging test sessions
-#AutoIt3Wrapper_Res_Fileversion=0.0.0.7
+#AutoIt3Wrapper_Res_Fileversion=0.0.0.9
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=notepad--
-#AutoIt3Wrapper_Res_ProductVersion=0.1
+#AutoIt3Wrapper_Res_ProductVersion=1.0
 #AutoIt3Wrapper_Res_CompanyName=Aheyeu Artsiom
 #AutoIt3Wrapper_Run_After=copy "config.ini" "D:\notepad--\notepad--\build"
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
@@ -104,8 +104,8 @@ GUISetAccelerators($aMainForm_AccelTable)
 $StatusBar = _GUICtrlStatusBar_Create($MainForm)
 Dim $StatusBar_PartsWidth[2] = [50, -1]
 _GUICtrlStatusBar_SetParts($StatusBar, $StatusBar_PartsWidth)
-_GUICtrlStatusBar_SetText($StatusBar, "Ok", 0)
-_GUICtrlStatusBar_SetText($StatusBar, "Some status", 1)
+_GUICtrlStatusBar_SetText($StatusBar, "", 0)
+_GUICtrlStatusBar_SetText($StatusBar, "Use the Enter key to move to the next line", 1)
 _GUICtrlStatusBar_SetMinHeight($StatusBar, 25)
 GUIRegisterMsg($WM_SIZE, "WM_SIZE")
 

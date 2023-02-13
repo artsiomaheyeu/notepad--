@@ -13,7 +13,7 @@
 
 Func SubMenuItemSave(ByRef $sData, $sPath, $hGUI)
 	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemSave) & @CRLF)
-	Local $iAnswer = MsgBox($MB_YESNO, "Qustion?", "Do you want to safe " & $sMainFileName & " file?")
+	Local $iAnswer = MsgBox(BitOR($MB_YESNO, $MB_ICONQUESTION), "File is not safe", "Do you want to safe " & $sMainFileName & " file?")
 	If $iAnswer == $IDNO Then Return
 	If Not ($sData == _OpenFile($sPath, $FO_READ, $sData)) Then 
 		Local $iReturn = _OpenFile($sPath, $FO_OVERWRITE, $sData)
@@ -26,7 +26,7 @@ Func SubMenuItemSaveAs($sData, $hGUI)
 	Local Const $sMessage = "Safe: Choose a filename..."
 	Local $sDialogReturnPath = FileSaveDialog($sMessage, @ScriptDir & "\", "Text file (*.csv;*.txt)|All (*.*)", $FD_PATHMUSTEXIST, "", $hGUI)
 	If @error Then
-		MsgBox($MB_SYSTEMMODAL, "Info", "No file was saved.")
+		MsgBox($MB_ICONINFORMATION, "Info", "No file was saved.")
 		Return False
 	Else
 		$sMainFileName = _GetNameFromPath($sDialogReturnPath)
@@ -53,7 +53,7 @@ EndFunc
 Func SubMenuItemExit($sCheckData, $hGUI)
 	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemExit) & @CRLF) 
 	If Not ($sCheckData == $sMainData) Then
-		Local $iAnswer = MsgBox($MB_YESNOCANCEL, "Qustion?", "Do you want to safe "& $sMainFileName &" file before exit?")
+		Local $iAnswer = MsgBox(BitOR($MB_YESNOCANCEL, $MB_ICONQUESTION), "Exit", "Do you want to safe "& $sMainFileName &" file before exit?")
 		If $iAnswer == $IDYES Then 
 			Switch $bIfExternalFileConnected
 				Case True
@@ -68,7 +68,7 @@ EndFunc
 Func _CheckFileExists($sPath)
 	If Not FileExists($sPath) Then 
 		if $DEBUG Then ConsoleWrite(FuncName(_CheckFileExists) & ": File is not exist" & @CRLF)
-		MsgBox(4096, "Warming", "The selected file does not exist, please select another one")
+		MsgBox($MB_ICONWARNING, "Warming", "The selected file does not exist, please select another one")
 		Return False
 	Else
 		Return True
@@ -88,7 +88,7 @@ Func _ChooseFile($hGUI)
 	Local Const $sMessage = "Open: Select text file ..."
 	Local $sDialogReturnPath = FileOpenDialog($sMessage, @ScriptDir & "\", "Text files (*.csv; *.txt)|All (*.*)", $FD_PROMPTCREATENEW , "", $hGUI)
 	If @error Then
-		MsgBox($MB_SYSTEMMODAL, "", "File not selected.")
+		MsgBox($MB_ICONINFORMATION, "Info", "File not selected.")
 		Return False
 	EndIf
 	$sMainFilePath = $sDialogReturnPath
@@ -100,7 +100,7 @@ Func _OpenFile($sPath, $sReadType, ByRef $sData) ;TODO: Refactor
 	;### Debug CONSOLE ↓↓↓
 	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $hFileOpen = ' & $hFileOpen & @CRLF & '>Error code: ' & @error & @CRLF)
 	If $hFileOpen = -1 Then
-		MsgBox(4096, "Warming", "An error occurred when opening the file.")
+		MsgBox($MB_ICONWARNING, "Warming", "An error occurred when opening the file.")
 		Return Null
 	EndIf
 	Local $sFileData
@@ -108,14 +108,14 @@ Func _OpenFile($sPath, $sReadType, ByRef $sData) ;TODO: Refactor
 		Case $FO_READ
 			$sFileData = FileRead($hFileOpen)
 			If @error Then
-				MsgBox(4096, "Warming", "An error occurred when reading the file.")
+				MsgBox($MB_ICONWARNING, "Warming", "An error occurred when reading the file.")
 				;~ FileClose($hFileOpen)
 				;~ Return Null
 			EndIf
 		Case Else
 			$sFileData = FileWrite($sPath, $sData)
 			If @error Then
-				MsgBox(4096, "Warming", "An error occurred when writing the file.")
+				MsgBox($MB_ICONWARNING, "Warming", "An error occurred when writing the file.")
 				;~ FileClose($hFileOpen)
 				;~ Return Null
 			EndIf		
