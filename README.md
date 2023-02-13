@@ -15,7 +15,7 @@ Windows only, but not forever!
 
 [Portable version] - Download on your PC and extract from archive or
 
-[The executable installer] - Picking next> next> next> and make it fun!
+[Windows installer] - Picking next> next> next> and make it fun!
 
 ## Configuration
 To customize your coding scheme, you can select **File->Edit Config** or manually edit the config.ini file in the program file folder. There are two sections, *Basic* with basic functions' editor, and *Key* section for log customization:
@@ -82,7 +82,7 @@ MIT
    [Download]: <https://github.com/artsiomaheyeu/notepad--/raw/2bb8f9ecf59700adec713e20440eb4e17b5d6772/build/Notepadmm_WIN1.0_setup.exe>
    [Release history]: <https://github.com/artsiomaheyeu/notepad--/blob/23d5480f820d5e2f38a8d65a4a07269b36823d61/build/release_note.txt>
    [Portable version]: <https://github.com/artsiomaheyeu/notepad--/blob/main/build/Notepadmm_WIN1.0.zip>
-   [The executable installer]: <https://github.com/artsiomaheyeu/notepad--/blob/main/build/Notepadmm_WIN1.0_setup.exe>
+   [Windows installer]: <https://github.com/artsiomaheyeu/notepad--/blob/main/build/Notepadmm_WIN1.0_setup.exe>
    [The font]: <https://learn.microsoft.com/en-us/typography/fonts/windows_10_font_list>
    [default]: <https://github.com/artsiomaheyeu/notepad--/blob/23d5480f820d5e2f38a8d65a4a07269b36823d61/source/config.ini>
    [send me]: <https://www.linkedin.com/in/artiomageev>
