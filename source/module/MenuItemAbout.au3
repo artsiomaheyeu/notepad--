@@ -9,4 +9,5 @@
 
 Func SubMenuItemAbout()
 	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemAbout) & @CRLF)
+	ShellExecute($ABOUTURL)
 EndFunc

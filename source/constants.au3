@@ -18,6 +18,8 @@ Global Const $APPNAME 		= "notepad--"
 Global Const $AUTHOR 		= "Artsiom Aheyeu"
 Global Const $BOXMAIL 		= "artiom.ageev@gmail.com"
 Global Const $REPURL 		= "https://github.com/artsiomaheyeu/notepad--.git"
+Global Const $ABOUTURL 		= "https://github.com/artsiomaheyeu/notepad--#readme"
+
 Global Const $BUILDFOLDER 	= "/build"
 
 Global Const $APPSIZE[2] 	= [1128, 246] ; [width, height]

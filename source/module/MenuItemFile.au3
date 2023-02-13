@@ -47,6 +47,7 @@ EndFunc
 
 Func SubMenuItemConfig()
 	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemConfig) & @CRLF)
+	ShellExecute("Notepad", $INI)
 EndFunc
 
 Func SubMenuItemExit($sCheckData, $hGUI)
@@ -108,18 +109,20 @@ Func _OpenFile($sPath, $sReadType, ByRef $sData) ;TODO: Refactor
 			$sFileData = FileRead($hFileOpen)
 			If @error Then
 				MsgBox(4096, "Warming", "An error occurred when reading the file.")
-				FileClose($hFileOpen)
-				Return Null
+				;~ FileClose($hFileOpen)
+				;~ Return Null
 			EndIf
 		Case Else
 			$sFileData = FileWrite($sPath, $sData)
 			If @error Then
 				MsgBox(4096, "Warming", "An error occurred when writing the file.")
-				FileClose($hFileOpen)
-				Return Null
+				;~ FileClose($hFileOpen)
+				;~ Return Null
 			EndIf		
 	EndSwitch
-	FileClose($hFileOpen)
+	FileClose($hFileOpen)			
+	;### Debug CONSOLE ↓↓↓
+	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $sFileData = ' & $sFileData & @CRLF & '>Error code: ' & @error & @CRLF)
 	If $sFileData Then Return $sFileData
 	;~ Else
 	;~ 	Return Null
