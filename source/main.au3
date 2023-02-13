@@ -46,7 +46,6 @@ $MainForm = GUICreate($sHeaderName, $APPSIZE[0], $APPSIZE[1], -1, -1, $WS_OVERLA
 
 $MenuItemFile = GUICtrlCreateMenu("File")
 GUICtrlSetState($MenuItemFile, $GUI_CHECKED)
-$SubMenuItemStartStop = GUICtrlCreateMenuItem("Start observation...   ", $MenuItemFile)
 $SubMenuItemSave 	= GUICtrlCreateMenuItem("Save		      Ctrl+S", $MenuItemFile)
 $SubMenuItemSaveAs 	= GUICtrlCreateMenuItem("Save As..	Ctrl+Shift+S", $MenuItemFile)
 $SubMenuItemOpen 	= GUICtrlCreateMenuItem("Open..			  Ctrl+O", $MenuItemFile)
@@ -57,6 +56,7 @@ $SubMenuItemExit 	= GUICtrlCreateMenuItem("Exit", $MenuItemFile)
 If Not $bIfExternalFileConnected Then GUICtrlSetState($SubMenuItemSave, $GUI_DISABLE)
 
 $MenuItemEdit = GUICtrlCreateMenu("Edit")
+$SubMenuItemStartStop = GUICtrlCreateMenuItem("Start observation...   ", $MenuItemEdit)
 
 $MenuItemAbout = GUICtrlCreateMenu("?")
 $SubMenuItemAbout = GUICtrlCreateMenuItem("About", $MenuItemAbout)
@@ -187,7 +187,7 @@ Func _InroductionData()
 					If $iUTC > 0 Then $sReturn &="-"
 					If $iUTC < 0 Then $sReturn &="+"
 					$sReturn &= Abs($iUTC) & ")" & @CRLF & _
-					 "Time Offset: 0 ms" & @CRLF & _
+					 "Time Offset: " & $TIMEOFFSET & " ms" & @CRLF & _
 					 "Study: " & $DEFUNSAFENAME & @CRLF & _
 					 "Recording: " & $DEFAUTHOR & @CRLF & _
 					 @CRLF & _

@@ -18,6 +18,7 @@ If IsArray($aSectionNames) or $aSectionNames = 1 Then
 	If _ArraySearch($aSectionNames, $INIKEYS) == -1 Then IniWriteSection($INI, $INIKEYS, "")
 EndIf
 
+Global Const $TIMEOFFSET 	= _GetVar("TimeOffset", 0)
 Global Const $BLOCKCOUNTS 	= _GetVar("BlocksCounts", 1)
 Global Const $SEPARATOR 	= _GetVar("Separator", ";")
 Global Const $FONTNAME 		= _GetVar("FontName", "Calibri")
@@ -27,11 +28,11 @@ Global Const $FONTATTRIBUT 	= _GetVar("FontAttribute", 0)
 
 Global $aKeySection = _ReadINISection($INI, $INIKEYS)
 
-For $i=0 To Ubound($aSectionNames) - 1
-	Local $iRow = _ArraySearch($aKeySection, $aSectionNames[$i])
-	;### Debug CONSOLE ↓↓↓
-	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $iRow = ' & $iRow & @CRLF & '>Error code: ' & @error & @CRLF)
-Next
+;~ For $i=0 To Ubound($aSectionNames) - 1
+;~ 	Local $iRow = _ArraySearch($aKeySection, $aSectionNames[$i])
+;~ 	If $iRow Then Assign()
+;~ 	$aExternal = _ReadINISection($INI, $aSectionNames[$iRow])
+;~ Next
 
 Func _ReadINISection($sFileName, $sSectionName)
 	Local $aValueSection = IniReadSection($sFileName, $sSectionName)
