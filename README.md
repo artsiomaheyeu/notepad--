@@ -1,6 +1,6 @@
 # notepad--
 
-Notepad-- is the perfect note-taking solution that lets you focus on what matters most—your observations. With a minimalist interface and no distracting ads, you can easily open the app and start signing up. Plus, you don't have to worry about spending money and it's very easy to set up. And if you need to save your work, Notepad even provides CSV output. [Download] now and experience the ease of taking notes.
+Notepad-- is the perfect note-taking solution that lets you focus on what matters most—your observations. With a minimalist interface and no distracting ads, you can easily open the app and start signing up. Plus, you don't have to worry about spending money and it's very easy to set up. And if you need to save your work, Notepad even provides CSV output. [Download] now and experience the ease of taking [notes].
 
 * Timestamps accurate to milliseconds
 * CSV text format
@@ -79,6 +79,7 @@ MIT
 **Free Software, Hell Yeah!**
 
    [AutoIt v3.3.14.5]: <https://www.autoitscript.com>
+   [notes]: <https://github.com/artsiomaheyeu/notepad--/blob/2d73e4e07cba0deda5864dbc2583cdd2eb5fcad5/example/Test.csv>
    [Download]: <https://github.com/artsiomaheyeu/notepad--/raw/2bb8f9ecf59700adec713e20440eb4e17b5d6772/build/Notepadmm_WIN1.0_setup.exe>
    [Release history]: <https://github.com/artsiomaheyeu/notepad--/blob/23d5480f820d5e2f38a8d65a4a07269b36823d61/build/release_note.txt>
    [Portable version]: <https://github.com/artsiomaheyeu/notepad--/blob/main/build/Notepadmm_WIN1.0.zip>
