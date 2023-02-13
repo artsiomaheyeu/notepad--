@@ -46,7 +46,7 @@ $MainForm = GUICreate($sHeaderName, $APPSIZE[0], $APPSIZE[1], -1, -1, $WS_OVERLA
 
 $MenuItemFile = GUICtrlCreateMenu("File")
 GUICtrlSetState($MenuItemFile, $GUI_CHECKED)
-$SubMenuItemStartStop 	= GUICtrlCreateMenuItem("Start observation...   ", $MenuItemFile)
+$SubMenuItemStartStop = GUICtrlCreateMenuItem("Start observation...   ", $MenuItemFile)
 $SubMenuItemSave 	= GUICtrlCreateMenuItem("Save		      Ctrl+S", $MenuItemFile)
 $SubMenuItemSaveAs 	= GUICtrlCreateMenuItem("Save As..	Ctrl+Shift+S", $MenuItemFile)
 $SubMenuItemOpen 	= GUICtrlCreateMenuItem("Open..			  Ctrl+O", $MenuItemFile)
@@ -130,7 +130,7 @@ While 1
 				$sObservationName = SubMenuItemStart($MainForm)
 				If $sObservationName Then
 					$bOpbservationStatus = True
-					;~ GUICtrlSetData($MainEdit, @CRLF & _InroductionData($sObservationName), 1)
+					GUICtrlSetData($MainEdit, StringReplace(GUICtrlRead($MainEdit), $DEFUNSAFENAME, $sObservationName))
 					GUICtrlSetData($MainEdit, _AbsolutTimeStamp() & "Status changed" & $SEPARATOR & "Observation started", 1)
 					GUICtrlSetData($SubMenuItemStartStop, "Stop observation")
 				EndIf
