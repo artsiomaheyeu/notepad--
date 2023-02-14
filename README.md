@@ -79,11 +79,11 @@ MIT
 **Free Software, Hell Yeah!**
 
    [AutoIt v3.3.14.5]: <https://www.autoitscript.com>
-   [notes]: <https://github.com/artsiomaheyeu/notepad--/blob/2d73e4e07cba0deda5864dbc2583cdd2eb5fcad5/example/Test.csv>
-   [Download]: <https://github.com/artsiomaheyeu/notepad--/raw/2bb8f9ecf59700adec713e20440eb4e17b5d6772/build/Notepadmm_WIN1.0_setup.exe>
-   [Release history]: <https://github.com/artsiomaheyeu/notepad--/blob/23d5480f820d5e2f38a8d65a4a07269b36823d61/build/release_note.txt>
-   [Portable version]: <https://github.com/artsiomaheyeu/notepad--/blob/main/build/Notepadmm_WIN1.0.zip>
-   [Windows installer]: <https://github.com/artsiomaheyeu/notepad--/blob/main/build/Notepadmm_WIN1.0_setup.exe>
+   [notes]: <https://github.com/artsiomaheyeu/notepad--/blob/5d4516bb45f219497380a6cfd47d4679bfd847ed/example/Test.csv>
+   [Download]: <https://github.com/artsiomaheyeu/notepad--/raw/Release-v1.0-(0.0.0.13)/build/Notepadmm_WIN1.0_setup.exe>
+   [Release history]: <https://github.com/artsiomaheyeu/notepad--/blob/5d4516bb45f219497380a6cfd47d4679bfd847ed/build/release_note.txt>
+   [Portable version]: <https://github.com/artsiomaheyeu/notepad--/blob/5d4516bb45f219497380a6cfd47d4679bfd847ed/build/Notepadmm_WIN1.0.zip>
+   [Windows installer]: <https://github.com/artsiomaheyeu/notepad--/blob/5d4516bb45f219497380a6cfd47d4679bfd847ed/build/Notepadmm_WIN1.0_setup.exe>
    [The font]: <https://learn.microsoft.com/en-us/typography/fonts/windows_10_font_list>
-   [default]: <https://github.com/artsiomaheyeu/notepad--/blob/23d5480f820d5e2f38a8d65a4a07269b36823d61/source/config.ini>
+   [default]: <https://github.com/artsiomaheyeu/notepad--/blob/5d4516bb45f219497380a6cfd47d4679bfd847ed/source/config.ini>
    [send me]: <https://www.linkedin.com/in/artiomageev>
