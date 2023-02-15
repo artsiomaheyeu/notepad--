@@ -2,7 +2,7 @@
 #AutoIt3Wrapper_Icon=icon.ico
 #AutoIt3Wrapper_Outfile=D:\notepad--\notepad--\build\notepad--.exe
 #AutoIt3Wrapper_Res_Description=A simple text editor for logging test sessions
-#AutoIt3Wrapper_Res_Fileversion=0.0.0.11
+#AutoIt3Wrapper_Res_Fileversion=0.0.0.13
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=notepad--
 #AutoIt3Wrapper_Res_ProductVersion=1.0
@@ -43,6 +43,7 @@ Local $bIsStadyNamed = False
 #include "module/MenuItemAbout.au3"
 
 Opt("GUIResizeMode", $GUI_DOCKAUTO)
+Opt("TrayIconHide", 1) ;0=show, 1=hide tray icon
 
 #Region ### START Koda GUI section ### Form=FormDesigner.kxf
 Global $sHeaderName = $APPNAME & "  " & $sObservationName & "*"
@@ -83,7 +84,7 @@ If IsArray($aKeySection)  Then
 	ReDim $aMainForm_AccelTable[$iAccelTableCount + $aKeySection[0][0]][2]
 
 	While $i <= $aKeySection[0][0]
-		#cs
+		#cs 
 			$aKeySection returned from config module as array:
 			$aKeySection[0][0] = Number of rows
 			$aKeySection[i][0] = ist Key
@@ -128,7 +129,7 @@ While 1
 		Case $SubMenuItemExit
 			SubMenuItemExit(GUICtrlRead($MainEdit), $MainForm)
 			Exit
-		Case $GUI_EVENT_CLOSE
+		Case $GUI_EVENT_CLOSE 
 			SubMenuItemExit(GUICtrlRead($MainEdit), $MainForm)
 			Exit
 		Case $SubMenuItemStartStop
@@ -165,7 +166,7 @@ While 1
 		    	$sMainData = GUICtrlRead($MainEdit)
 				SubMenuItemSave($sMainData, $sMainFilePath, $MainForm)
 			EndIf
-			If SubMenuItemOpen($MainForm) Then
+			If SubMenuItemOpen($MainForm) Then 	
 				GUICtrlSetData($MainEdit, $sMainData)
 				_ChangeItemStatusTo(True)
 				_UpdateFormTitle()
@@ -189,9 +190,9 @@ Func _InroductionData()
 	$aTimeZoneInformation = _Date_Time_GetTimeZoneInformation()
 	Local $iBiasForLT = 1
 	Local $iUTC = $aTimeZoneInformation[$iBiasForLT] / 60
-
+	
 	Local $sReturn = "Recording date: " & @YEAR & "/" & @MON  & "/" & @MDAY & @CRLF & _
-					 "Recording time: " & @HOUR & ":" & @MIN & ":" & @SEC & "(UTC"
+					 "Recording time: " & @HOUR & ":" & @MIN & ":" & @SEC & "(UTC" 
 					If $iUTC > 0 Then $sReturn &="-"
 					If $iUTC < 0 Then $sReturn &="+"
 					$sReturn &= Abs($iUTC) & ")" & @CRLF & _
@@ -205,7 +206,7 @@ EndFunc
 
 Func _UpdateFormTitle()
 	$sHeaderName = $APPNAME & "  " & $sObservationName
-	If $bIfExternalFileConnected Then
+	If $bIfExternalFileConnected Then 
 		$sHeaderName &= ": " & $sMainFileName
 	Else
 		$sHeaderName &= "*"
@@ -229,7 +230,7 @@ Func WM_SIZE($hWnd, $iMsg, $wParam, $lParam)
 	#forceref $hWnd, $iMsg, $wParam, $lParam
 	_GUICtrlStatusBar_Resize($StatusBar)
 	Return $GUI_RUNDEFMSG
-EndFunc
+EndFunc 
 
 Func _AbsolutTimeStamp()
 	Return @CRLF & @HOUR & ":" & @MIN & ":" & @SEC & "." & @MSEC & $SEPARATOR
