@@ -96,7 +96,7 @@ Func _ChooseFile($hGUI)
 EndFunc
 
 Func _OpenFile($sPath, $sReadType, ByRef $sData) ;TODO: Refactor
-	Local $hFileOpen = FileOpen($sPath, $sReadType)
+	Local $hFileOpen = FileOpen($sPath, BitOR($sReadType, $FO_UTF8))
 	;### Debug CONSOLE ↓↓↓
 	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $hFileOpen = ' & $hFileOpen & @CRLF & '>Error code: ' & @error & @CRLF)
 	If $hFileOpen = -1 Then
