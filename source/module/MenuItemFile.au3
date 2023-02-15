@@ -13,8 +13,6 @@
 
 Func SubMenuItemSave(ByRef $sData, $sPath, $hGUI)
 	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemSave) & @CRLF)
-	Local $iAnswer = MsgBox(BitOR($MB_YESNO, $MB_ICONQUESTION), "File is not safe", "Do you want to safe " & $sMainFileName & " file?")
-	If $iAnswer == $IDNO Then Return
 	If Not ($sData == _OpenFile($sPath, $FO_READ, $sData)) Then 
 		Local $iReturn = _OpenFile($sPath, $FO_OVERWRITE, $sData)
 		If Not $iReturn Then SubMenuItemSaveAs($sData, $hGUI)
@@ -23,7 +21,7 @@ EndFunc
 
 Func SubMenuItemSaveAs($sData, $hGUI)
 	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemSaveAs) & @CRLF) 
-	Local Const $sMessage = "Safe: Choose a filename..."
+	Local Const $sMessage = "Save: Choose a filename..."
 	Local $sDialogReturnPath = FileSaveDialog($sMessage, @ScriptDir & "\", "Text file (*.csv;*.txt)|All (*.*)", $FD_PATHMUSTEXIST, "", $hGUI)
 	If @error Then
 		MsgBox($MB_ICONINFORMATION, "Info", "No file was saved.")
@@ -32,11 +30,16 @@ Func SubMenuItemSaveAs($sData, $hGUI)
 		$sMainFileName = _GetNameFromPath($sDialogReturnPath)
 		If Not _OpenFile($sDialogReturnPath, $FO_OVERWRITE, $sData) Then Return False
 	EndIf
+	$sMainFilePath = $sDialogReturnPath
 	Return True
 EndFunc
 
-Func SubMenuItemOpen($hGUI)
+Func SubMenuItemOpen($hGUI, $sData)
 	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemOpen) & @CRLF)
+	If $bIfExternalFileConnected Then 
+	Local $iAnswer = MsgBox(BitOR($MB_YESNO, $MB_ICONQUESTION), "Recent changes not saved", "Do you want to save " & $sMainFileName & " file before closing?")
+	If $iAnswer == $IDYES Then SubMenuItemSave($sData, $sMainFilePath, $hGUI)
+	EndIf
 	If _ChooseFile($hGUI) Then $sMainData = _OpenFile($sMainFilePath, $FO_READ, $sMainData)
 	If $sMainData Then 
 		$sMainFileName = _GetNameFromPath($sMainFilePath)
@@ -45,7 +48,7 @@ Func SubMenuItemOpen($hGUI)
 	Return False
 EndFunc
 
-Func SubMenuItemConfig()
+Func SubMenuItemConfig()  ;TODO: Create config panel with apply changes
 	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemConfig) & @CRLF)
 	ShellExecute("Notepad", $INI)
 EndFunc
@@ -53,7 +56,7 @@ EndFunc
 Func SubMenuItemExit($sCheckData, $hGUI)
 	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemExit) & @CRLF) 
 	If Not ($sCheckData == $sMainData) Then
-		Local $iAnswer = MsgBox(BitOR($MB_YESNOCANCEL, $MB_ICONQUESTION), "Exit", "Do you want to safe "& $sMainFileName &" file before exit?")
+		Local $iAnswer = MsgBox(BitOR($MB_YESNOCANCEL, $MB_ICONQUESTION), "Exit", "Do you want to save "& $sMainFileName &" file before exit?")
 		If $iAnswer == $IDYES Then 
 			Switch $bIfExternalFileConnected
 				Case True
@@ -95,38 +98,20 @@ Func _ChooseFile($hGUI)
 	Return True
 EndFunc
 
-Func _OpenFile($sPath, $sReadType, ByRef $sData) ;TODO: Refactor
+Func _OpenFile($sPath, $sReadType, ByRef $sData)
 	Local $hFileOpen = FileOpen($sPath, BitOR($sReadType, $FO_UTF8))
-	;### Debug CONSOLE ↓↓↓
-	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $hFileOpen = ' & $hFileOpen & @CRLF & '>Error code: ' & @error & @CRLF)
-	If $hFileOpen = -1 Then
-		MsgBox($MB_ICONWARNING, "Warming", "An error occurred when opening the file.")
-		Return Null
-	EndIf
+	If $hFileOpen = -1 Then MsgBox($MB_ICONWARNING, "Warming", "An error occurred when opening the file.")
 	Local $sFileData
 	Switch $sReadType
 		Case $FO_READ
 			$sFileData = FileRead($hFileOpen)
-			If @error Then
-				MsgBox($MB_ICONWARNING, "Warming", "An error occurred when reading the file.")
-				;~ FileClose($hFileOpen)
-				;~ Return Null
-			EndIf
+			If @error Then MsgBox($MB_ICONWARNING, "Warming", "An error occurred when reading the file.")
 		Case Else
 			$sFileData = FileWrite($sPath, $sData)
-			If @error Then
-				MsgBox($MB_ICONWARNING, "Warming", "An error occurred when writing the file.")
-				;~ FileClose($hFileOpen)
-				;~ Return Null
-			EndIf		
+			If @error Then MsgBox($MB_ICONWARNING, "Warming", "An error occurred when writing the file.")	
 	EndSwitch
 	FileClose($hFileOpen)			
-	;### Debug CONSOLE ↓↓↓
-	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $sFileData = ' & $sFileData & @CRLF & '>Error code: ' & @error & @CRLF)
-	If $sFileData Then Return $sFileData
-	;~ Else
-	;~ 	Return Null
-	;~ EndIf
+	Return $sFileData
 EndFunc
 
 Func _GetNameFromPath($sPath)
