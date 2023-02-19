@@ -9,6 +9,7 @@
 #ce ----------------------------------------------------------------------------
 
 #include <Array.au3>
+#include <WinAPI.au3>
 
 If Not FileExists($INI) Then FileWrite($INI, "# Config file for notepad--")
 
@@ -26,6 +27,8 @@ Global Const $FONTNAME 		= _GetVar("FontName", "Calibri")
 Global Const $FONTSIZE 		= _GetVar("FontSize", 11)
 Global Const $FONTWEIGHT 	= _GetVar("FontWeight", 400)
 Global Const $FONTATTRIBUT 	= _GetVar("FontAttribute", 0)
+
+Global $aExeSection = _ReadINISection($INI, $INIEXE)
 
 Global $aKeySection = _ReadINISection($INI, $INIKEYS)
 
@@ -51,3 +54,7 @@ Func Bool($sBool)
 	If Not StringCompare($sBool, "True") Then Return True
 	If Not StringCompare($sBool, "False") Then Return False
 EndFunc 
+
+Func _ScanKodeToVK()
+	
+EndFunc
