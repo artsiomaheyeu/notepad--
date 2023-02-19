@@ -2,7 +2,7 @@
 #AutoIt3Wrapper_Icon=icon.ico
 #AutoIt3Wrapper_Outfile=D:\notepad--\notepad--\build\notepad--.exe
 #AutoIt3Wrapper_Res_Description=A simple text editor for logging test sessions
-#AutoIt3Wrapper_Res_Fileversion=0.0.0.15
+#AutoIt3Wrapper_Res_Fileversion=0.0.0.16
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=notepad--
 #AutoIt3Wrapper_Res_ProductVersion=1.0
@@ -25,9 +25,11 @@
 #include <WindowsConstants.au3>
 #include <Date.au3>
 #include <GuiEdit.au3>
+;#include <GuiMenu.au3>
 
 #Region ### Variables section ###
 #include "constants.au3"
+
 #include "config.au3"
 Global $bIfExternalFileConnected = False ; [True|False]
 Global $sMainFilePath = ""
@@ -36,6 +38,7 @@ Global $sMainData = ""
 Global $bOpbservationStatus = False
 Local $sObservationName = $DEFUNSAFENAME
 Local $bIsStadyNamed = False
+Local $bWinActiveFlag0, $bWinActiveFlag1
 #EndRegion ### Variables section ###
 
 #include "module/MenuItemFile.au3"
@@ -45,35 +48,32 @@ Local $bIsStadyNamed = False
 Opt("GUIResizeMode", $GUI_DOCKAUTO)
 Opt("TrayIconHide", 1) ;0=show, 1=hide tray icon
 
+OnAutoItExitRegister('OnAutoItExit')
+
 #Region ### START Koda GUI section ### Form=FormDesigner.kxf
 Global $sHeaderName = $APPNAME & "  " & $sObservationName & "*"
 $MainForm = GUICreate($sHeaderName, $APPSIZE[0], $APPSIZE[1], -1, -1, $WS_OVERLAPPEDWINDOW)
 
-$MenuItemFile = GUICtrlCreateMenu("File")
+$MenuItemFile = GUICtrlCreateMenu("&File")
 GUICtrlSetState($MenuItemFile, $GUI_CHECKED)
-$SubMenuItemSave 	= GUICtrlCreateMenuItem("Save		      Ctrl+S", $MenuItemFile)
-$SubMenuItemSaveAs 	= GUICtrlCreateMenuItem("Save As..	Ctrl+Shift+S", $MenuItemFile)
-$SubMenuItemOpen 	= GUICtrlCreateMenuItem("Open..			  Ctrl+O", $MenuItemFile)
-$SubMenuItemConfig 	= GUICtrlCreateMenuItem("Edit config", $MenuItemFile)
+$SubMenuItemSave 	= GUICtrlCreateMenuItem("&Save		      Ctrl+S", $MenuItemFile)
+$SubMenuItemSaveAs 	= GUICtrlCreateMenuItem("Save &As..	Ctrl+Shift+S", $MenuItemFile)
+$SubMenuItemOpen 	= GUICtrlCreateMenuItem("&Open..			  Ctrl+O", $MenuItemFile)
+$SubMenuItemConfig 	= GUICtrlCreateMenuItem("&Edit config", $MenuItemFile)
 GUICtrlCreateMenuItem("", $MenuItemFile)
-$SubMenuItemExit 	= GUICtrlCreateMenuItem("Exit", $MenuItemFile)
+$SubMenuItemExit 	= GUICtrlCreateMenuItem("E&xit", $MenuItemFile)
 
 If Not $bIfExternalFileConnected Then GUICtrlSetState($SubMenuItemSave, $GUI_DISABLE)
 
-$MenuItemEdit = GUICtrlCreateMenu("Edit")
-$SubMenuItemStartStop = GUICtrlCreateMenuItem("Start observation... Shift+Alt+S", $MenuItemEdit)
+$MenuItemEdit = GUICtrlCreateMenu("&Edit")
+$SubMenuItemStartStop = GUICtrlCreateMenuItem("&Start observation... Shift+Alt+S", $MenuItemEdit)
 
-$MenuItemAbout = GUICtrlCreateMenu("?")
-$SubMenuItemAbout = GUICtrlCreateMenuItem("About", $MenuItemAbout)
+$MenuItemAbout = GUICtrlCreateMenu("&?")
+$SubMenuItemAbout = GUICtrlCreateMenuItem("&About", $MenuItemAbout)
 
-$FakeGUIEnter = GUICtrlCreateMenu("")
-GUICtrlSetState($FakeGUIEnter, $GUI_DISABLE)
+$FakeGUIEnter = GUICtrlCreateDummy()
 
-Dim $aMainForm_AccelTable[5][2] = [["^s", $SubMenuItemSave], _  		; Ctrl+S
-								   ["^+s", $SubMenuItemSaveAs], _ 		; Ctrl+Shift+S
-								   ["^o", $SubMenuItemOpen], _			; Ctrl+O
-								   ["+!s", $SubMenuItemStartStop], _  	; Shift-Alt-s
-								   ["{ENTER}", $FakeGUIEnter]] 			; Enter
+Dim $aMainForm_AccelTable[1][2] = [["{ENTER}", $FakeGUIEnter]]		; Enter
 
 If IsArray($aKeySection)  Then
 	Local $i = 1
@@ -110,7 +110,9 @@ _GUICtrlStatusBar_SetParts($StatusBar, $StatusBar_PartsWidth)
 _GUICtrlStatusBar_SetText($StatusBar, "", 0)
 _GUICtrlStatusBar_SetText($StatusBar, "Use the Enter key to move to the next line", 1)
 _GUICtrlStatusBar_SetMinHeight($StatusBar, 25)
+
 GUIRegisterMsg($WM_SIZE, "WM_SIZE")
+GUIRegisterMsg($WM_HOTKEY, 'WM_HOTKEY')
 
 $MainEdit = GUICtrlCreateEdit("", 1, 1, $APPSIZE[0] - 2, $APPSIZE[1] - 49, BitOR($GUI_SS_DEFAULT_EDIT, $WS_BORDER))
 GUICtrlSendMsg($MainEdit, $EM_LIMITTEXT, -1, 0)
@@ -124,6 +126,7 @@ GUICtrlSetData($MainEdit, _InroductionData(), 1)
 
 #Region ### MAIN ###
 While 1
+	_IsWinActive($MainForm)
 	$nMsg = GUIGetMsg()
 	Switch $nMsg
 		Case $SubMenuItemExit
@@ -185,6 +188,48 @@ WEnd
 #EndRegion ### MAIN ###
 
 #Region ### Functions ###
+Func _IsWinActive($hWnd)
+	If WinActive($hWnd) Then $bWinActiveFlag0 = True
+    If $bWinActiveFlag0 <> $bWinActiveFlag1 Then $bWinActiveFlag1 = _RegisterHotKey($bWinActiveFlag0)
+	$bWinActiveFlag0 = False
+EndFunc		;==>_IsWinActive
+
+Func _RegisterHotKey($bFlag)
+	If $bFlag Then
+		_WinAPI_RegisterHotKey($MainForm, $SubMenuItemSave, $MOD_CONTROL, $VK[_ArraySearch($VK, "S")][1]) ; Ctrl+S
+		_WinAPI_RegisterHotKey($MainForm, $SubMenuItemSaveAs, BitOR($MOD_CONTROL, $MOD_SHIFT), $VK[_ArraySearch($VK, "S")][1]) ; Ctrl+Shift+S
+		_WinAPI_RegisterHotKey($MainForm, $SubMenuItemOpen, $MOD_CONTROL, $VK[_ArraySearch($VK, "O")][1]) ; Ctrl+O
+		_WinAPI_RegisterHotKey($MainForm, $SubMenuItemStartStop, BitOR($MOD_SHIFT, $MOD_ALT), $VK[_ArraySearch($VK, "S")][1]) ; Shift-Alt-S
+        if $DEBUG Then ConsoleWrite("--> RegisterHotKey" & @CRLF)
+    Else
+		_WinAPI_UnregisterHotKey($MainForm, $SubMenuItemSave)
+		_WinAPI_UnregisterHotKey($MainForm, $SubMenuItemSaveAs)
+		_WinAPI_UnregisterHotKey($MainForm, $SubMenuItemOpen)
+		_WinAPI_UnregisterHotKey($MainForm, $SubMenuItemStartStop)
+		if $DEBUG Then ConsoleWrite("RegisterHotKey <--" & @CRLF)
+    EndIf
+	Return $bFlag
+EndFunc   ;==>_RegisterHotKey
+
+Func OnAutoItExit()
+    _RegisterHotKey(False)
+EndFunc   ;==>OnAutoItExit
+
+Func WM_HOTKEY($hWnd, $iMsg, $wParam, $lParam)
+	#forceref $hWnd, $iMsg, $wParam
+	if $DEBUG Then ConsoleWrite(FuncName(WM_HOTKEY) & " Catch $wParam=" & $wParam & @CRLF)
+	Switch $wParam
+		Case $SubMenuItemSave
+			$nMsg = $SubMenuItemSave
+		Case $SubMenuItemSaveAs
+			$nMsg = $SubMenuItemSaveAs
+		Case $SubMenuItemOpen
+			$nMsg = $SubMenuItemOpen
+		Case $SubMenuItemStartStop
+			$nMsg = $SubMenuItemStartStop
+	EndSwitch
+EndFunc   ;==>WM_HOTKEY
+
 Func _InroductionData()
 	If Not $ISINRTO Then Return Null
 	$aTimeZoneInformation = _Date_Time_GetTimeZoneInformation()
@@ -202,7 +247,7 @@ Func _InroductionData()
 					 @CRLF & _
 					 "Absolut Time" & $SEPARATOR & "Actions" & $SEPARATOR & "Comment"
 	Return $sReturn
-EndFunc
+EndFunc		;==>_InroductionData
 
 Func _UpdateFormTitle()
 	$sHeaderName = $APPNAME & "  " & $sObservationName
@@ -212,7 +257,7 @@ Func _UpdateFormTitle()
 		$sHeaderName &= "*"
 	EndIf
 	WinSetTitle($MainForm, "", $sHeaderName)
-EndFunc
+EndFunc		;==>_UpdateFormTitle
 
 Func _ChangeItemStatusTo($bStatus)
 	If BitXOR($bIfExternalFileConnected, $bStatus) Then
@@ -223,18 +268,18 @@ Func _ChangeItemStatusTo($bStatus)
 			GUICtrlSetState($SubMenuItemSave, $GUI_DISABLE)
 		EndIf
 	EndIf
-EndFunc
+EndFunc		;==>_ChangeItemStatusTo
 
 ; Resize the status bar when GUI size changes
 Func WM_SIZE($hWnd, $iMsg, $wParam, $lParam)
 	#forceref $hWnd, $iMsg, $wParam, $lParam
 	_GUICtrlStatusBar_Resize($StatusBar)
 	Return $GUI_RUNDEFMSG
-EndFunc 
+EndFunc		;==>WM_SIZE
 
 Func _AbsolutTimeStamp()
 	Return @CRLF & @HOUR & ":" & @MIN & ":" & @SEC & "." & @MSEC & $SEPARATOR
-EndFunc
+EndFunc		;==>_AbsolutTimeStamp
 
 Func _BlockCounts()
 	$sReturn = ""
@@ -242,5 +287,5 @@ Func _BlockCounts()
 		$sReturn &= $DEFAUTHOR & $SEPARATOR
 	Next
 	Return $sReturn
-EndFunc
+EndFunc		;==>_BlockCounts
 #EndRegion ### Functions ###
