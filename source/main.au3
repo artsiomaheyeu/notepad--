@@ -2,7 +2,7 @@
 #AutoIt3Wrapper_Icon=icon.ico
 #AutoIt3Wrapper_Outfile=D:\notepad--\notepad--\build\notepad--.exe
 #AutoIt3Wrapper_Res_Description=A simple text editor for logging test sessions
-#AutoIt3Wrapper_Res_Fileversion=0.0.0.17
+#AutoIt3Wrapper_Res_Fileversion=0.0.0.18
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=notepad--
 #AutoIt3Wrapper_Res_ProductVersion=1.0
@@ -187,7 +187,7 @@ While 1
 			$iRow = _ArraySearch($aSubMenuItemEdit, $nMsg)
 			_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _RelativeTimeStamp() & SubMenuItemEdit($aKeySection[$iRow][$iColValue], $aKeySection[$iRow][$iColKey]) & $SEPARATOR)
 		Case $FakeGUIEnter
-			_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _RelativeTimeStamp())
+			_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _RelativeTimeStamp() & $DEFAUTHOR & $SEPARATOR)
 	EndSwitch
 WEnd
 #EndRegion ### MAIN ###
