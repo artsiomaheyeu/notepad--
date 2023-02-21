@@ -2,7 +2,7 @@
 #AutoIt3Wrapper_Icon=icon.ico
 #AutoIt3Wrapper_Outfile=D:\notepad--\notepad--\build\notepad--.exe
 #AutoIt3Wrapper_Res_Description=A simple text editor for logging test sessions
-#AutoIt3Wrapper_Res_Fileversion=0.0.0.18
+#AutoIt3Wrapper_Res_Fileversion=0.0.0.19
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=notepad--
 #AutoIt3Wrapper_Res_ProductVersion=1.0
@@ -40,8 +40,10 @@ Global $bOpbservationStatus = False
 Local $sObservationName = $DEFUNSAFENAME
 Local $bIsStadyNamed = False
 Local $bWinActiveFlag0, $bWinActiveFlag1
-Local $iTimer								; Var a timestamp number (in milliseconds).
-Local $iLastRelTime = $TIMEOFFSET			; Timestamp returned from a previous call to _Timer_Init() plus time correction
+Global $hStarttime								; Var a timestamp number (in milliseconds).
+Global $iLastRelTime = $TIMEOFFSET				; Timestamp returned from a previous call to _Timer_Init() plus time correction (in milliseconds)
+Global $iTimeBuff = 0							; Last timestamp buffer  (in milliseconds)
+
 #EndRegion ### Variables section ###
 
 #include "module/MenuItemFile.au3"
@@ -139,15 +141,20 @@ While 1
 			SubMenuItemExit(GUICtrlRead($MainEdit), $MainForm)
 			Exit
 		Case $SubMenuItemStartStop
+			If Not $TIMERRESET Then
+				$iTimeBuff = $iLastRelTime
+			Else
+				$iTimeBuff  = $TIMEOFFSET
+			EndIf
 			if $bOpbservationStatus = False Then
 				If Not $bIsStadyNamed Then $sObservationName = SubMenuItemStart($MainForm)
 				If $sObservationName Then
 					$bIsStadyNamed = True
 					GUICtrlSetData($MainEdit, StringReplace(GUICtrlRead($MainEdit), $DEFUNSAFENAME, $sObservationName))
-					_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _RelativeTimeStamp() & "Status changed" & $SEPARATOR & "Observation started")
+					$hStarttime = _Timer_Init()
 					$bOpbservationStatus = True
+					_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _RelativeTimeStamp() & "Status changed" & $SEPARATOR & "Observation started")
 					GUICtrlSetData($SubMenuItemStartStop, "Stop observation     Shift+Alt+S")
-					$iTimer = _Timer_Init() + $iLastRelTime 
 				EndIf
 			Else
 				If SubMenuItemStop($MainForm) Then
@@ -283,11 +290,11 @@ Func WM_SIZE($hWnd, $iMsg, $wParam, $lParam)
 EndFunc		;==>WM_SIZE
 
 Func _AbsolutTimeStamp()
-	Return @CRLF & @HOUR & ":" & @MIN & ":" & @SEC & "." & @MSEC & $SEPARATOR
+	Return @CRLF & StringFormat("%d:%.2d:%.2d.%.3d", @HOUR, @MIN, @SEC ,@MSEC) & $SEPARATOR
 EndFunc		;==>_AbsolutTimeStamp
 
 Func _RelativeTimeStamp()
-	If $bOpbservationStatus Then $iLastRelTime += _Timer_Diff($iTimer)
+	If $bOpbservationStatus Then $iLastRelTime = _Timer_Diff($hStarttime) + $iTimeBuff
 	Return StringFormat("%d:%.2d:%06.3f", (Floor($iLastRelTime / 3600000)), (Floor(Mod($iLastRelTime,3600000) / 60000)), (Mod(Mod($iLastRelTime,3600000),60000) / 1000)) & $SEPARATOR
 EndFunc		;==>_RelativeTimeStamp
 #EndRegion ### Functions ###
