@@ -21,7 +21,7 @@ EndIf
 
 Global Const $ISINRTO 		= Bool(_GetVar("IsIntro", True))
 Global Const $TIMEOFFSET 	= Int(_GetVar("TimeOffset", 0))
-Global Const $BLOCKCOUNTS 	= Int(_GetVar("BlocksCounts", 1))
+Global Const $TIMERRESET 	= Bool(_GetVar("TimerReset", False))
 Global Const $SEPARATOR 	= _GetVar("Separator", ";")
 Global Const $FONTNAME 		= _GetVar("FontName", "Calibri")
 Global Const $FONTSIZE 		= _GetVar("FontSize", 11)
@@ -54,7 +54,3 @@ Func Bool($sBool)
 	If Not StringCompare($sBool, "True") Then Return True
 	If Not StringCompare($sBool, "False") Then Return False
 EndFunc 
-
-Func _ScanKodeToVK()
-	
-EndFunc

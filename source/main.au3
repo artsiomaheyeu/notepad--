@@ -2,7 +2,7 @@
 #AutoIt3Wrapper_Icon=icon.ico
 #AutoIt3Wrapper_Outfile=D:\notepad--\notepad--\build\notepad--.exe
 #AutoIt3Wrapper_Res_Description=A simple text editor for logging test sessions
-#AutoIt3Wrapper_Res_Fileversion=0.0.0.16
+#AutoIt3Wrapper_Res_Fileversion=0.0.0.17
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=notepad--
 #AutoIt3Wrapper_Res_ProductVersion=1.0
@@ -25,6 +25,7 @@
 #include <WindowsConstants.au3>
 #include <Date.au3>
 #include <GuiEdit.au3>
+#include <Timers.au3>
 ;#include <GuiMenu.au3>
 
 #Region ### Variables section ###
@@ -39,6 +40,8 @@ Global $bOpbservationStatus = False
 Local $sObservationName = $DEFUNSAFENAME
 Local $bIsStadyNamed = False
 Local $bWinActiveFlag0, $bWinActiveFlag1
+Local $iTimer								; Var a timestamp number (in milliseconds).
+Local $iLastRelTime = $TIMEOFFSET			; Timestamp returned from a previous call to _Timer_Init() plus time correction
 #EndRegion ### Variables section ###
 
 #include "module/MenuItemFile.au3"
@@ -140,16 +143,18 @@ While 1
 				If Not $bIsStadyNamed Then $sObservationName = SubMenuItemStart($MainForm)
 				If $sObservationName Then
 					$bIsStadyNamed = True
-					$bOpbservationStatus = True
 					GUICtrlSetData($MainEdit, StringReplace(GUICtrlRead($MainEdit), $DEFUNSAFENAME, $sObservationName))
-					_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & "Status changed" & $SEPARATOR & "Observation started")
+					_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _RelativeTimeStamp() & "Status changed" & $SEPARATOR & "Observation started")
+					$bOpbservationStatus = True
 					GUICtrlSetData($SubMenuItemStartStop, "Stop observation     Shift+Alt+S")
+					$iTimer = _Timer_Init() + $iLastRelTime 
 				EndIf
 			Else
 				If SubMenuItemStop($MainForm) Then
+					_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _RelativeTimeStamp() & "Status changed" & $SEPARATOR & "Observation stopped")
 					$bOpbservationStatus = False
-					_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & "Status changed" & $SEPARATOR & "Observation stopped")
 					GUICtrlSetData($SubMenuItemStartStop, "Start observation... Shift+Alt+S")
+					If $TIMERRESET Then $iLastRelTime = $TIMEOFFSET
 				EndIf
 			EndIf
 			_UpdateFormTitle()
@@ -180,9 +185,9 @@ While 1
 			SubMenuItemAbout()
 		Case $aSubMenuItemEdit[1] to $aSubMenuItemEdit[UBound($aSubMenuItemEdit) - 1]
 			$iRow = _ArraySearch($aSubMenuItemEdit, $nMsg)
-			_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & SubMenuItemEdit($aKeySection[$iRow][$iColValue], $aKeySection[$iRow][$iColKey]) & $SEPARATOR)
+			_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _RelativeTimeStamp() & SubMenuItemEdit($aKeySection[$iRow][$iColValue], $aKeySection[$iRow][$iColKey]) & $SEPARATOR)
 		Case $FakeGUIEnter
-			_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _BlockCounts())
+			_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _RelativeTimeStamp())
 	EndSwitch
 WEnd
 #EndRegion ### MAIN ###
@@ -196,10 +201,10 @@ EndFunc		;==>_IsWinActive
 
 Func _RegisterHotKey($bFlag)
 	If $bFlag Then
-		_WinAPI_RegisterHotKey($MainForm, $SubMenuItemSave, $MOD_CONTROL, $VK[_ArraySearch($VK, "S")][1]) ; Ctrl+S
-		_WinAPI_RegisterHotKey($MainForm, $SubMenuItemSaveAs, BitOR($MOD_CONTROL, $MOD_SHIFT), $VK[_ArraySearch($VK, "S")][1]) ; Ctrl+Shift+S
-		_WinAPI_RegisterHotKey($MainForm, $SubMenuItemOpen, $MOD_CONTROL, $VK[_ArraySearch($VK, "O")][1]) ; Ctrl+O
-		_WinAPI_RegisterHotKey($MainForm, $SubMenuItemStartStop, BitOR($MOD_SHIFT, $MOD_ALT), $VK[_ArraySearch($VK, "S")][1]) ; Shift-Alt-S
+		_WinAPI_RegisterHotKey($MainForm, $SubMenuItemSave, $MOD_CONTROL, $VK[_ArraySearch($VK, "S")][1]) 						; Ctrl+S
+		_WinAPI_RegisterHotKey($MainForm, $SubMenuItemSaveAs, BitOR($MOD_CONTROL, $MOD_SHIFT), $VK[_ArraySearch($VK, "S")][1]) 	; Ctrl+Shift+S
+		_WinAPI_RegisterHotKey($MainForm, $SubMenuItemOpen, $MOD_CONTROL, $VK[_ArraySearch($VK, "O")][1]) 						; Ctrl+O
+		_WinAPI_RegisterHotKey($MainForm, $SubMenuItemStartStop, BitOR($MOD_SHIFT, $MOD_ALT), $VK[_ArraySearch($VK, "S")][1])	; Shift-Alt-S
         if $DEBUG Then ConsoleWrite("--> RegisterHotKey" & @CRLF)
     Else
 		_WinAPI_UnregisterHotKey($MainForm, $SubMenuItemSave)
@@ -245,7 +250,7 @@ Func _InroductionData()
 					 "Study: " & $DEFUNSAFENAME & @CRLF & _
 					 "Recording: " & $DEFAUTHOR & @CRLF & _
 					 @CRLF & _
-					 "Absolut Time" & $SEPARATOR & "Actions" & $SEPARATOR & "Comment"
+					 "Absolut Time" & $SEPARATOR & "Relative Time" & $SEPARATOR & "Actions" & $SEPARATOR & "Comment"
 	Return $sReturn
 EndFunc		;==>_InroductionData
 
@@ -281,11 +286,8 @@ Func _AbsolutTimeStamp()
 	Return @CRLF & @HOUR & ":" & @MIN & ":" & @SEC & "." & @MSEC & $SEPARATOR
 EndFunc		;==>_AbsolutTimeStamp
 
-Func _BlockCounts()
-	$sReturn = ""
-	For $i = 1 to $BLOCKCOUNTS
-		$sReturn &= $DEFAUTHOR & $SEPARATOR
-	Next
-	Return $sReturn
-EndFunc		;==>_BlockCounts
+Func _RelativeTimeStamp()
+	If $bOpbservationStatus Then $iLastRelTime += _Timer_Diff($iTimer)
+	Return StringFormat("%d:%.2d:%06.3f", (Floor($iLastRelTime / 3600000)), (Floor(Mod($iLastRelTime,3600000) / 60000)), (Mod(Mod($iLastRelTime,3600000),60000) / 1000)) & $SEPARATOR
+EndFunc		;==>_RelativeTimeStamp
 #EndRegion ### Functions ###
