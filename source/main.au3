@@ -2,7 +2,7 @@
 #AutoIt3Wrapper_Icon=icon.ico
 #AutoIt3Wrapper_Outfile=D:\notepad--\notepad--\build\notepad--.exe
 #AutoIt3Wrapper_Res_Description=A simple text editor for logging test sessions
-#AutoIt3Wrapper_Res_Fileversion=0.0.0.19
+#AutoIt3Wrapper_Res_Fileversion=0.0.0.20
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=notepad--
 #AutoIt3Wrapper_Res_ProductVersion=1.0
@@ -71,7 +71,7 @@ $SubMenuItemExit 	= GUICtrlCreateMenuItem("E&xit", $MenuItemFile)
 If Not $bIfExternalFileConnected Then GUICtrlSetState($SubMenuItemSave, $GUI_DISABLE)
 
 $MenuItemEdit = GUICtrlCreateMenu("&Edit")
-$SubMenuItemStartStop = GUICtrlCreateMenuItem("&Start observation... Shift+Alt+S", $MenuItemEdit)
+$SubMenuItemStartStop = GUICtrlCreateMenuItem("&Start observation... [Shift+S]", $MenuItemEdit)
 
 $MenuItemAbout = GUICtrlCreateMenu("&?")
 $SubMenuItemAbout = GUICtrlCreateMenuItem("&About", $MenuItemAbout)
@@ -154,13 +154,13 @@ While 1
 					$hStarttime = _Timer_Init()
 					$bOpbservationStatus = True
 					_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _RelativeTimeStamp() & "Status changed" & $SEPARATOR & "Observation started")
-					GUICtrlSetData($SubMenuItemStartStop, "Stop observation     Shift+Alt+S")
+					GUICtrlSetData($SubMenuItemStartStop, "Stop observation     [Shift+S]")
 				EndIf
 			Else
 				If SubMenuItemStop($MainForm) Then
 					_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _RelativeTimeStamp() & "Status changed" & $SEPARATOR & "Observation stopped")
 					$bOpbservationStatus = False
-					GUICtrlSetData($SubMenuItemStartStop, "Start observation... Shift+Alt+S")
+					GUICtrlSetData($SubMenuItemStartStop, "Start observation... [Shift+S]")
 					If $TIMERRESET Then $iLastRelTime = $TIMEOFFSET
 				EndIf
 			EndIf
@@ -211,7 +211,7 @@ Func _RegisterHotKey($bFlag)
 		_WinAPI_RegisterHotKey($MainForm, $SubMenuItemSave, $MOD_CONTROL, $VK[_ArraySearch($VK, "S")][1]) 						; Ctrl+S
 		_WinAPI_RegisterHotKey($MainForm, $SubMenuItemSaveAs, BitOR($MOD_CONTROL, $MOD_SHIFT), $VK[_ArraySearch($VK, "S")][1]) 	; Ctrl+Shift+S
 		_WinAPI_RegisterHotKey($MainForm, $SubMenuItemOpen, $MOD_CONTROL, $VK[_ArraySearch($VK, "O")][1]) 						; Ctrl+O
-		_WinAPI_RegisterHotKey($MainForm, $SubMenuItemStartStop, BitOR($MOD_SHIFT, $MOD_ALT), $VK[_ArraySearch($VK, "S")][1])	; Shift-Alt-S
+		_WinAPI_RegisterHotKey($MainForm, $SubMenuItemStartStop, $MOD_SHIFT, $VK[_ArraySearch($VK, "S")][1])					; Shift+S
         if $DEBUG Then ConsoleWrite("--> RegisterHotKey" & @CRLF)
     Else
 		_WinAPI_UnregisterHotKey($MainForm, $SubMenuItemSave)
