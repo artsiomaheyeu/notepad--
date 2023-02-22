@@ -141,6 +141,7 @@ While 1
 			SubMenuItemExit(GUICtrlRead($MainEdit), $MainForm)
 			Exit
 		Case $SubMenuItemStartStop
+			
 			If Not $TIMERRESET Then
 				$iTimeBuff = $iLastRelTime
 			Else
@@ -154,10 +155,12 @@ While 1
 					$hStarttime = _Timer_Init()
 					$bOpbservationStatus = True
 					_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _RelativeTimeStamp() & "Status changed" & $SEPARATOR & "Observation started")
+					_ExecuteList($aStartSection)
 					GUICtrlSetData($SubMenuItemStartStop, "Stop observation     [Shift+S]")
 				EndIf
 			Else
 				If SubMenuItemStop($MainForm) Then
+					_ExecuteList($aStopSection)
 					_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _RelativeTimeStamp() & "Status changed" & $SEPARATOR & "Observation stopped")
 					$bOpbservationStatus = False
 					GUICtrlSetData($SubMenuItemStartStop, "Start observation... [Shift+S]")
@@ -260,6 +263,20 @@ Func _InroductionData()
 					 "Absolut Time" & $SEPARATOR & "Relative Time" & $SEPARATOR & "Actions" & $SEPARATOR & "Comment"
 	Return $sReturn
 EndFunc		;==>_InroductionData
+
+Func _ExecuteList($aArray)
+	For $i=1 to $aArray[0][0]
+		Local $sTextMessage = "External "
+		Local $aStartExequte = ExecuteList($aArray[$i][0], $aArray[$i][1])
+		If $aStartExequte[1] = 'cmd' Then $sTextMessage &= "command '" & $aStartExequte[2] & "' "
+		If $aStartExequte[1] = 'app' Then $sTextMessage &= "application '" & $aStartExequte[2] & "' "
+		If $aStartExequte[0] = 0 	 Then $sTextMessage &= "has not been launched "
+		If $aStartExequte[0] = 1     Then $sTextMessage &= "launched successfully (PID:" & $aStartExequte[3] & ") "
+		If $aStartExequte[4] Then $sTextMessage &= "with respond " & $aStartExequte[4]
+		_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _RelativeTimeStamp() & "Execute replay" & $SEPARATOR & $sTextMessage)
+		WinActivate($MainForm)
+	Next
+EndFunc
 
 Func _UpdateFormTitle()
 	$sHeaderName = $APPNAME & "  " & $sObservationName

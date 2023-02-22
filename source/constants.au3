@@ -8,11 +8,12 @@
 
 #ce ----------------------------------------------------------------------------
 
-Global Const $DEBUG 		= True
+Global Const $DEBUG 		= False
 
 Global Const $INI 			= "config.ini"
 Global Const $INIDEFAULSTS 	= "Basic"
-Global Const $INIEXE 		= "Execute"
+Global Const $INISTART 		= "Start"
+Global Const $INISTOP 		= "Stop"
 Global Const $INIKEYS 		= "Keys"
 
 Global Const $APPNAME 		= "notepad-- v1.1"

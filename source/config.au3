@@ -16,6 +16,8 @@ If Not FileExists($INI) Then FileWrite($INI, "# Config file for notepad--")
 Local $aSectionNames = IniReadSectionNames($INI)
 If IsArray($aSectionNames) or $aSectionNames = 1 Then
 	If _ArraySearch($aSectionNames, $INIDEFAULSTS) == -1 Then IniWriteSection($INI, $INIDEFAULSTS, "")
+	If _ArraySearch($aSectionNames, $INISTART) == -1 Then IniWriteSection($INI, $INISTART, "")
+	If _ArraySearch($aSectionNames, $INISTOP) == -1 Then IniWriteSection($INI, $INISTOP, "")
 	If _ArraySearch($aSectionNames, $INIKEYS) == -1 Then IniWriteSection($INI, $INIKEYS, "")
 EndIf
 
@@ -28,7 +30,8 @@ Global Const $FONTSIZE 		= _GetVar("FontSize", 11)
 Global Const $FONTWEIGHT 	= _GetVar("FontWeight", 400)
 Global Const $FONTATTRIBUT 	= _GetVar("FontAttribute", 0)
 
-Global $aExeSection = _ReadINISection($INI, $INIEXE)
+Global $aStartSection = _ReadINISection($INI, $INISTART)
+Global $aStopSection = _ReadINISection($INI, $INISTOP)
 
 Global $aKeySection = _ReadINISection($INI, $INIKEYS)
 
