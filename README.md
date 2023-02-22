@@ -23,7 +23,7 @@ To customize your coding scheme, you can select **File->Edit Config** or manuall
 [Basic]
 IsIntro=True
 TimeOffset=0
-BlocksCounts=1
+TimerReset=False
 Separator=;
 FontName=Ebrima
 FontSize=11
@@ -38,9 +38,9 @@ Key=Value
 
 *IsIntro*: If set to True, a header will be automatically added at the beginning of the protocol that includes the date, time, author, study name, and a transcript header. If you plan to automate the processing of protocols, it is recommended to set this parameter to False.
 
-*TimeOffset*: This allows you to set a time offset relative to the actual time. For instance, if the protocol is being broadcasted live with a known delay time, the time offset can be adjusted accordingly (it will be included in the next release).
+*TimeOffset*: This allows you to set a time offset relative to the actual time. For instance, if the protocol is being broadcasted live with a known delay time, the time offset can be adjusted accordingly.
 
-*BlocksCounts*: The number of blocks between the timestamp and comment (it will be included in the next release).
+*TimerReset*: The counter logic can be set to either True or False. When set to True, each observation period starts from Timer reset. On the other hand, when set to False, the counter continues to sum each observation period.
 
 *Separator*: The separator used to divide blocks of text.
 
