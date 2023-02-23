@@ -2,7 +2,7 @@
 #AutoIt3Wrapper_Icon=icon.ico
 #AutoIt3Wrapper_Outfile=D:\notepad--\notepad--\build\notepad--.exe
 #AutoIt3Wrapper_Res_Description=A simple text editor for logging test sessions
-#AutoIt3Wrapper_Res_Fileversion=0.0.0.20
+#AutoIt3Wrapper_Res_Fileversion=0.0.0.21
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=notepad--
 #AutoIt3Wrapper_Res_ProductVersion=1.0
@@ -271,7 +271,8 @@ Func _ExecuteList($aArray)
 		If $aStartExequte[1] = 'cmd' Then $sTextMessage &= "command '" & $aStartExequte[2] & "' "
 		If $aStartExequte[1] = 'app' Then $sTextMessage &= "application '" & $aStartExequte[2] & "' "
 		If $aStartExequte[0] = 0 	 Then $sTextMessage &= "has not been launched "
-		If $aStartExequte[0] = 1     Then $sTextMessage &= "launched successfully (PID:" & $aStartExequte[3] & ") "
+		If $aStartExequte[0] = 1     Then $sTextMessage &= "launched successfully "
+		If $aStartExequte[1] = 'app' Then $sTextMessage &= "(PID:" & $aStartExequte[3] & ") "
 		If $aStartExequte[4] Then $sTextMessage &= "with respond " & $aStartExequte[4]
 		_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _RelativeTimeStamp() & "Execute replay" & $SEPARATOR & $sTextMessage)
 		WinActivate($MainForm)

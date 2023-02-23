@@ -35,19 +35,22 @@ Func ExecuteList($sKey, $sValue)
 	Switch $sKey
 		Case 'cmd'
 			$aReturn[3] = Run(@ComSpec & " /c " & $sValue, @SystemDir, @SW_HIDE, $STDERR_CHILD + $STDOUT_CHILD)
-			$aReturn[4] = "CMD_" & @HOUR & @MIN & @SEC & @MSEC & ".log"
-			
+			Local $sFileName = $sObservationName & "_" & @WDAY & @HOUR & @MIN & @SEC & @MSEC & ".log"
 			Local $i = 1
 			While 1
 				$sline = StdoutRead($aReturn[3])
 				If @error Then ExitLoop
 					If $sline <> "" Then 
-					_OpenFile($aReturn[4], $FO_APPEND, $sline)
+					If _OpenFile($sFileName, $FO_APPEND, $sline) Then $aReturn[4] = $sFileName
 					ProgressSet($i, $i & "%")
 					If $i < 100 Then $i += 1
 					EndIf
 			Wend
-			If StderrRead($aReturn[3]) Then $aReturn[0] = 0
+			$sErr = StderrRead($aReturn[3])
+			If $sErr Then 
+				$aReturn[0] = 0
+				If _OpenFile($sFileName, $FO_APPEND, $sErr) Then $aReturn[4] = "ERROR: " & $sFileName
+				EndIf
 		Case 'app'
 			$aReturn[3] = ShellExecute($sValue)
 			if @error Then $aReturn[0] = 0
