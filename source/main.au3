@@ -2,7 +2,7 @@
 #AutoIt3Wrapper_Icon=icon.ico
 #AutoIt3Wrapper_Outfile=D:\notepad--\notepad--\build\notepad--.exe
 #AutoIt3Wrapper_Res_Description=A simple text editor for logging test sessions
-#AutoIt3Wrapper_Res_Fileversion=0.0.0.21
+#AutoIt3Wrapper_Res_Fileversion=0.0.0.22
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=notepad--
 #AutoIt3Wrapper_Res_ProductVersion=1.0
@@ -265,6 +265,7 @@ Func _InroductionData()
 EndFunc		;==>_InroductionData
 
 Func _ExecuteList($aArray)
+	If Not IsArray($aArray) Then Return
 	For $i=1 to $aArray[0][0]
 		Local $sTextMessage = "External "
 		Local $aStartExequte = ExecuteList($aArray[$i][0], $aArray[$i][1])
