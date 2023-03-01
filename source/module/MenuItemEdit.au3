@@ -52,8 +52,17 @@ Func ExecuteList($sKey, $sValue)
 				If _OpenFile($sFileName, $FO_APPEND, $sErr) Then $aReturn[4] = "ERROR: " & $sFileName
 				EndIf
 		Case 'app'
-			$aReturn[3] = ShellExecute($sValue)
-			if @error Then $aReturn[0] = 0
+			Local $aValue = StringSplit($sValue, " ")
+			If $aValue[0] = 1 Then 
+				$aReturn[3] = ShellExecute($sValue)
+			Else
+				Local $sParameters
+				For $i = 2 To $aValue[0]
+					$sParameters &= $aValue[$i] & " "
+				Next
+				$aReturn[3] = ShellExecute($aValue[1], $sParameters)
+			EndIf
+				if @error Then $aReturn[0] = 0
 	EndSwitch
 	ProgressSet(100, "Done", "Complete")
 	ProgressOff()
