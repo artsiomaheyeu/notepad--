@@ -60,12 +60,15 @@ Func SubMenuItemExit($sCheckData, $hGUI)
 		If $iAnswer == $IDYES Then 
 			Switch $bIfExternalFileConnected
 				Case True
-					SubMenuItemSave($sMainFilePath, $sCheckData, $hGUI)
+					Return SubMenuItemSave($sMainFilePath, $sCheckData, $hGUI)
 				Case False
-					SubMenuItemSaveAs($sCheckData, $hGUI)
+					Return SubMenuItemSaveAs($sCheckData, $hGUI)
 			EndSwitch
+		ElseIf $iAnswer == $IDNO Then 
+			Return True
 		EndIf
 	EndIf
+	Return False
 EndFunc
 
 Func _CheckFileExists($sPath)

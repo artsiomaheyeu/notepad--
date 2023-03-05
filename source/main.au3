@@ -115,7 +115,7 @@ $StatusBar = _GUICtrlStatusBar_Create($MainForm)
 Dim $StatusBar_PartsWidth[2] = [50, -1]
 _GUICtrlStatusBar_SetParts($StatusBar, $StatusBar_PartsWidth)
 _GUICtrlStatusBar_SetText($StatusBar, "", 0)
-_GUICtrlStatusBar_SetText($StatusBar, "Use the [Enter] key to move to the next line or [Start observation] for start region", 1)
+_GUICtrlStatusBar_SetText($StatusBar, "Use the [Enter] key to move in to the next line or [Start observation] for start region", 1)
 _GUICtrlStatusBar_SetMinHeight($StatusBar, 25)
 
 GUIRegisterMsg($WM_SIZE, "WM_SIZE")
@@ -137,11 +137,17 @@ While 1
 	$nMsg = GUIGetMsg()
 	Switch $nMsg
 		Case $SubMenuItemExit
-			SubMenuItemExit(GUICtrlRead($MainEdit), $MainForm)
-			Exit
+			If $bOpbservationStatus Then 
+				Local $iReturn = MsgBox(BitOR($MB_ICONINFORMATION, $MB_YESNO), "Info", "It's mandatory to complete the observation before exit." & @CRLF & "Do you really want to close the program?")
+				If $iReturn = $IDNO Then ContinueLoop
+			EndIf
+			If SubMenuItemExit(GUICtrlRead($MainEdit), $MainForm) Then Exit
 		Case $GUI_EVENT_CLOSE 
-			SubMenuItemExit(GUICtrlRead($MainEdit), $MainForm)
-			Exit
+			If $bOpbservationStatus Then 
+				MsgBox($MB_ICONINFORMATION, "Info", "It's mandatory to complete the observation before exit.")
+				ContinueLoop
+			EndIf
+			If SubMenuItemExit(GUICtrlRead($MainEdit), $MainForm) Then Exit
 		Case $SubMenuItemStartStop
 			If Not $TIMERRESET Then
 				$iTimeBuff = $iLastRelTime
