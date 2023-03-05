@@ -43,12 +43,14 @@ Local $bWinActiveFlag0, $bWinActiveFlag1
 Global $hStarttime								; Var a timestamp number (in milliseconds).
 Global $iLastRelTime = $TIMEOFFSET				; Timestamp returned from a previous call to _Timer_Init() plus time correction (in milliseconds)
 Global $iTimeBuff = 0							; Last timestamp buffer  (in milliseconds)
+Global $StatusBarFlag = True					; Status bar Update flag for mainloop 
 
 #EndRegion ### Variables section ###
 
 #include "module/MenuItemFile.au3"
 #include "module/MenuItemEdit.au3"
 #include "module/MenuItemAbout.au3"
+#include "module/StatusBar.au3"
 
 Opt("GUIResizeMode", $GUI_DOCKAUTO)
 Opt("TrayIconHide", 1) ;0=show, 1=hide tray icon
@@ -113,7 +115,7 @@ $StatusBar = _GUICtrlStatusBar_Create($MainForm)
 Dim $StatusBar_PartsWidth[2] = [50, -1]
 _GUICtrlStatusBar_SetParts($StatusBar, $StatusBar_PartsWidth)
 _GUICtrlStatusBar_SetText($StatusBar, "", 0)
-_GUICtrlStatusBar_SetText($StatusBar, "Use the Enter key to move to the next line", 1)
+_GUICtrlStatusBar_SetText($StatusBar, "Use the [Enter] key to move to the next line or [Start observation] for start region", 1)
 _GUICtrlStatusBar_SetMinHeight($StatusBar, 25)
 
 GUIRegisterMsg($WM_SIZE, "WM_SIZE")
@@ -141,7 +143,6 @@ While 1
 			SubMenuItemExit(GUICtrlRead($MainEdit), $MainForm)
 			Exit
 		Case $SubMenuItemStartStop
-			
 			If Not $TIMERRESET Then
 				$iTimeBuff = $iLastRelTime
 			Else
@@ -157,6 +158,7 @@ While 1
 					_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _RelativeTimeStamp() & "Status changed" & $SEPARATOR & "Observation started")
 					_ExecuteList($aStartSection)
 					GUICtrlSetData($SubMenuItemStartStop, "Stop observation     [Shift+S]")
+					_GUICtrlStatusBar_SetText($StatusBar, UpdateStatusBar("STOP"), 1)
 				EndIf
 			Else
 				If SubMenuItemStop($MainForm) Then
@@ -164,6 +166,7 @@ While 1
 					_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _RelativeTimeStamp() & "Status changed" & $SEPARATOR & "Observation stopped")
 					$bOpbservationStatus = False
 					GUICtrlSetData($SubMenuItemStartStop, "Start observation... [Shift+S]")
+					_GUICtrlStatusBar_SetText($StatusBar, UpdateStatusBar("START"), 1)
 					If $TIMERRESET Then $iLastRelTime = $TIMEOFFSET
 				EndIf
 			EndIf
@@ -198,6 +201,9 @@ While 1
 			_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _RelativeTimeStamp() & SubMenuItemEdit($aKeySection[$iRow][$iColValue], $aKeySection[$iRow][$iColKey]) & $SEPARATOR)
 		Case $FakeGUIEnter
 			_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _RelativeTimeStamp() & $DEFAUTHOR & $SEPARATOR)
+		Case Else
+			If $StatusBarFlag Then $StatusBarFlag = False
+			;~ If @error Then _GUICtrlStatusBar_SetIcon($StatusBar, 0, _WinAPI_LoadShell32Icon(161))
 	EndSwitch
 WEnd
 #EndRegion ### MAIN ###
