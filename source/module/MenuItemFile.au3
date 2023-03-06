@@ -37,7 +37,7 @@ EndFunc
 Func SubMenuItemOpen($hGUI, $sData)
 	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemOpen) & @CRLF)
 	If $bIfExternalFileConnected Then 
-	Local $iAnswer = MsgBox(BitOR($MB_YESNO, $MB_ICONQUESTION), "Recent changes not saved", "Do you want to save " & $sMainFileName & " file before closing?")
+	Local $iAnswer = MsgBox(BitOR($MB_YESNO, $MB_ICONQUESTION), "Recent changes not saved", "Do you want to save the " & $sMainFileName & " file before closing?")
 	If $iAnswer == $IDYES Then SubMenuItemSave($sMainFilePath, $sData, $hGUI)
 	EndIf
 	If _ChooseFile($hGUI) Then $sMainData = _OpenFile($sMainFilePath, $FO_READ, $sMainData)
@@ -56,7 +56,15 @@ EndFunc
 Func SubMenuItemExit($sCheckData, $hGUI)
 	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemExit) & @CRLF) 
 	If Not ($sCheckData == $sMainData) Then
-		Local $iAnswer = MsgBox(BitOR($MB_YESNOCANCEL, $MB_ICONQUESTION), "Exit", "Do you want to save "& $sMainFileName &" file before exit?")
+		Local $sMessage = "Do you want to save the protocol "
+		If $sObservationName <> $DEFUNSAFENAME Then $sMessage &= $sObservationName & " "
+		If $sMainFileName Then 
+			$sMessage &= "to the file " & $sMainFileName
+		Else
+			$sMessage &= "to a file"
+		EndIf
+		$sMessage &= " before exiting?"
+		Local $iAnswer = MsgBox(BitOR($MB_YESNOCANCEL, $MB_ICONQUESTION), "Exit", $sMessage)
 		If $iAnswer == $IDYES Then 
 			Switch $bIfExternalFileConnected
 				Case True
@@ -66,6 +74,8 @@ Func SubMenuItemExit($sCheckData, $hGUI)
 			EndSwitch
 		ElseIf $iAnswer == $IDNO Then 
 			Return True
+		ElseIf $iAnswer == $IDCANCEL Then 
+			Return False
 		EndIf
 	EndIf
 	Return False

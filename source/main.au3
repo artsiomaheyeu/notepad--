@@ -37,7 +37,7 @@ Global $sMainFilePath = ""
 Global $sMainFileName = ""
 Global $sMainData = ""
 Global $bOpbservationStatus = False
-Local $sObservationName = $DEFUNSAFENAME
+Global $sObservationName = $DEFUNSAFENAME
 Local $bIsStadyNamed = False
 Local $bWinActiveFlag0, $bWinActiveFlag1
 Global $hStarttime								; Var a timestamp number (in milliseconds).
@@ -141,7 +141,16 @@ While 1
 			ContinueCase 
 		Case $GUI_EVENT_CLOSE 
 			If $bOpbservationStatus Then 
-				Local $iReturn = MsgBox(BitOR($MB_ICONINFORMATION, $MB_YESNO), "Info", "It's mandatory to complete the observation before exit." & @CRLF & "Do you really want to close the program?")
+				Local $iReturn = MsgBox(BitOR($MB_ICONINFORMATION, $MB_YESNO), _ 
+								"Info", "It's mandatory to complete the observation before exit." & @CRLF & "Do you really want to stop observation and close the program?")
+				If $iReturn = $IDYES Then 
+					_ExecuteList($aStopSection)
+					_GUICtrlEdit_AppendText($MainEdit, _AbsolutTimeStamp() & _RelativeTimeStamp() & "Status changed" & $SEPARATOR & "Observation stopped")
+					$bOpbservationStatus = False
+					GUICtrlSetData($SubMenuItemStartStop, "Start observation... [Shift+S]")
+					_GUICtrlStatusBar_SetText($StatusBar, UpdateStatusBar("START"), 1)
+					If $TIMERRESET Then $iLastRelTime = $TIMEOFFSET
+					EndIf
 				If $iReturn = $IDNO Then ContinueLoop
 			EndIf
 			If SubMenuItemExit(GUICtrlRead($MainEdit), $MainForm) Then Exit
