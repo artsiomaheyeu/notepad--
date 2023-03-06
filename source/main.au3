@@ -52,6 +52,7 @@ Global $StatusBarFlag = True					; Status bar Update flag for mainloop
 #include "module/MenuItemAbout.au3"
 #include "module/StatusBar.au3"
 
+Opt("GUICloseOnESC", 0)							; Don't send the $GUI_EVENT_CLOSE message when ESC is pressed.
 Opt("GUIResizeMode", $GUI_DOCKAUTO)
 Opt("TrayIconHide", 1) ;0=show, 1=hide tray icon
 
@@ -137,15 +138,11 @@ While 1
 	$nMsg = GUIGetMsg()
 	Switch $nMsg
 		Case $SubMenuItemExit
+			ContinueCase 
+		Case $GUI_EVENT_CLOSE 
 			If $bOpbservationStatus Then 
 				Local $iReturn = MsgBox(BitOR($MB_ICONINFORMATION, $MB_YESNO), "Info", "It's mandatory to complete the observation before exit." & @CRLF & "Do you really want to close the program?")
 				If $iReturn = $IDNO Then ContinueLoop
-			EndIf
-			If SubMenuItemExit(GUICtrlRead($MainEdit), $MainForm) Then Exit
-		Case $GUI_EVENT_CLOSE 
-			If $bOpbservationStatus Then 
-				MsgBox($MB_ICONINFORMATION, "Info", "It's mandatory to complete the observation before exit.")
-				ContinueLoop
 			EndIf
 			If SubMenuItemExit(GUICtrlRead($MainEdit), $MainForm) Then Exit
 		Case $SubMenuItemStartStop
