@@ -11,7 +11,7 @@
 #include <MsgBoxConstants.au3>
 #include <StringConstants.au3>
 
-Func SubMenuItemSave(ByRef $sData, $sPath, $hGUI)
+Func SubMenuItemSave($sPath, ByRef $sData, $hGUI)
 	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemSave) & @CRLF)
 	If Not ($sData == _OpenFile($sPath, $FO_READ, $sData)) Then 
 		Local $iReturn = _OpenFile($sPath, $FO_OVERWRITE, $sData)
@@ -38,7 +38,7 @@ Func SubMenuItemOpen($hGUI, $sData)
 	if $DEBUG Then ConsoleWrite(FuncName(SubMenuItemOpen) & @CRLF)
 	If $bIfExternalFileConnected Then 
 	Local $iAnswer = MsgBox(BitOR($MB_YESNO, $MB_ICONQUESTION), "Recent changes not saved", "Do you want to save " & $sMainFileName & " file before closing?")
-	If $iAnswer == $IDYES Then SubMenuItemSave($sData, $sMainFilePath, $hGUI)
+	If $iAnswer == $IDYES Then SubMenuItemSave($sMainFilePath, $sData, $hGUI)
 	EndIf
 	If _ChooseFile($hGUI) Then $sMainData = _OpenFile($sMainFilePath, $FO_READ, $sMainData)
 	If $sMainData Then 
@@ -110,10 +110,10 @@ Func _OpenFile($sPath, $sReadType, ByRef $sData)
 			$sFileData = FileRead($hFileOpen)
 			If @error Then MsgBox($MB_ICONWARNING, "Warming", "An error occurred when reading the file.")
 		Case Else
-			$sFileData = FileWrite($sPath, $sData)
+			$sFileData = FileWrite($hFileOpen, $sData)
 			If @error Then MsgBox($MB_ICONWARNING, "Warming", "An error occurred when writing the file.")	
 	EndSwitch
-	FileClose($hFileOpen)			
+	FileClose($hFileOpen)
 	Return $sFileData
 EndFunc
 

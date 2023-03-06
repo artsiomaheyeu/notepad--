@@ -2,7 +2,7 @@
 #AutoIt3Wrapper_Icon=icon.ico
 #AutoIt3Wrapper_Outfile=D:\notepad--\notepad--\build\notepad--.exe
 #AutoIt3Wrapper_Res_Description=A simple text editor for logging test sessions
-#AutoIt3Wrapper_Res_Fileversion=0.0.0.22
+#AutoIt3Wrapper_Res_Fileversion=0.0.0.23
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=y
 #AutoIt3Wrapper_Res_ProductName=notepad--
 #AutoIt3Wrapper_Res_ProductVersion=1.0
@@ -177,7 +177,7 @@ While 1
 		Case $SubMenuItemSave
 			if $bIfExternalFileConnected Then
 		    	$sMainData = GUICtrlRead($MainEdit)
-				SubMenuItemSave($sMainData, $sMainFilePath, $MainForm)
+				SubMenuItemSave($sMainFilePath, $sMainData, $MainForm)
 			EndIf
 		Case $SubMenuItemSaveAs
 			$sMainData = GUICtrlRead($MainEdit)
@@ -188,7 +188,7 @@ While 1
 		Case $SubMenuItemOpen
 			if $bIfExternalFileConnected And Not ($sMainData == GUICtrlRead($MainEdit)) Then
 		    	$sMainData = GUICtrlRead($MainEdit)
-				SubMenuItemSave($sMainData, $sMainFilePath, $MainForm)
+				SubMenuItemSave($sMainFilePath, $sMainData, $MainForm)
 			EndIf
 			If SubMenuItemOpen($MainForm, GUICtrlRead($MainEdit)) Then 	
 				GUICtrlSetData($MainEdit, $sMainData)
